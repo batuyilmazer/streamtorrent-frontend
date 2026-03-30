@@ -10,6 +10,7 @@ interface Props {
 }
 
 function getExtension(filename: string): string {
+  if (!filename) return '?';
   const parts = filename.split('.');
   return parts.length > 1 ? parts[parts.length - 1].toLowerCase() : '?';
 }
@@ -20,7 +21,8 @@ export function FileTree({ files, selectedIndex, onSelect }: Props) {
   return (
     <ul className="space-y-0.5">
       {files.map((file) => {
-        const ext = getExtension(file.name);
+        const displayName = file.name || file.path?.split('/').pop() || 'unknown';
+        const ext = getExtension(displayName);
         const isVideo = VIDEO_EXTS.has(ext);
         const isSelected = file.index === selectedIndex;
 
@@ -38,7 +40,7 @@ export function FileTree({ files, selectedIndex, onSelect }: Props) {
               onClick={() => isVideo && onSelect(file.index)}
               disabled={!isVideo}
             >
-              <span className="truncate flex-1 font-medium">{file.name}</span>
+              <span className="truncate flex-1 font-medium">{displayName}</span>
               <span className="shrink-0 text-xs text-muted-foreground">{formatBytes(file.size)}</span>
               <Badge
                 variant={isSelected ? 'default' : 'secondary'}

@@ -49,6 +49,8 @@ function reducer(state: State, action: Action): State {
       if (state.phase !== 'watch') return state;
       return { ...state, selectedFileIndex: action.index };
     case 'ERROR':
+      // If we were in 'info' phase (waiting for stream), go back to upload so the spinner stops.
+      if (state.phase === 'info') return { phase: 'upload', error: action.message };
       return { ...state, error: action.message } as State;
     case 'DISMISS_ERROR':
       return { ...state, error: undefined } as State;

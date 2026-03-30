@@ -1,4 +1,8 @@
-const API_BASE = import.meta.env.PUBLIC_API_URL ?? '';
+const API_BASE =
+  import.meta.env.PUBLIC_API_URL ??
+  (import.meta.env.PROD
+    ? 'https://api.film.bira.pizza'
+    : 'http://localhost:3001');
 
 export class ApiError extends Error {
   constructor(
