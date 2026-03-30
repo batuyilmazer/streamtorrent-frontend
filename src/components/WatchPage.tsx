@@ -100,10 +100,16 @@ export default function WatchPage({ torrentId }: Props) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-4 items-start">
-        <VideoPlayer
-          src={buildStreamUrl(state.session.streamToken, state.selectedFileIndex)}
-          title={state.session.files.find(f => f.index === state.selectedFileIndex)?.name ?? ''}
-        />
+        {state.session.files.find(f => f.index === state.selectedFileIndex) ? (
+          <VideoPlayer
+            src={buildStreamUrl(state.session.streamToken, state.selectedFileIndex)}
+            title={state.session.files.find(f => f.index === state.selectedFileIndex)!.name}
+          />
+        ) : (
+          <div className="aspect-video bg-black flex items-center justify-center text-sm text-muted-foreground rounded-md">
+            Oynatılabilir dosya bulunamadı.
+          </div>
+        )}
 
         <Card>
           <CardHeader className="pb-2">
