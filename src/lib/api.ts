@@ -34,7 +34,7 @@ export interface FileEntry {
 export interface TorrentInfo {
   id: string;
   name: string;
-  size: number;
+  size: string; // BigInt serialized as string
   fileList: FileEntry[];
 }
 
