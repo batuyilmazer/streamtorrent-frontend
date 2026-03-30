@@ -92,7 +92,7 @@ export default function WatchPage({ torrentId }: Props) {
       <div className="flex items-center justify-between">
         <div className="min-w-0">
           <h1 className="font-medium truncate">{state.torrent.name}</h1>
-          <p className="text-xs text-muted-foreground">{formatBytes(state.torrent.size)}</p>
+          <p className="text-xs text-muted-foreground">{formatBytes(Number(state.torrent.size) || 0)}</p>
         </div>
         <Button variant="ghost" size="sm" onClick={() => (window.location.href = '/')}>
           ← Ana sayfa

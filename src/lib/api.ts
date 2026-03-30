@@ -50,11 +50,10 @@ export interface StreamSession {
 export const api = {
   torrents: {
     upload(file: File): Promise<TorrentResponse> {
-      const body = new FormData();
-      body.append('torrentFile', file);
       return request<TorrentResponse>('/api/torrents/upload', {
         method: 'POST',
-        body,
+        body: file,
+        headers: { 'Content-Type': 'application/octet-stream' },
       });
     },
 

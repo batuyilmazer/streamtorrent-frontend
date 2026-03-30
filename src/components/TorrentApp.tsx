@@ -160,7 +160,7 @@ export default function TorrentApp() {
                   {state.torrent.fileList.length} dosya
                 </Badge>
               </div>
-              <p className="text-xs text-muted-foreground">{formatBytes(state.torrent.size)}</p>
+              <p className="text-xs text-muted-foreground">{formatBytes(Number(state.torrent.size) || 0)}</p>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
@@ -189,7 +189,7 @@ export default function TorrentApp() {
           <div className="flex items-center justify-between">
             <div className="min-w-0">
               <h2 className="font-medium truncate">{state.torrent.name}</h2>
-              <p className="text-xs text-muted-foreground">{formatBytes(state.torrent.size)}</p>
+              <p className="text-xs text-muted-foreground">{formatBytes(Number(state.torrent.size) || 0)}</p>
             </div>
             <Button variant="ghost" size="sm" onClick={() => dispatch({ type: 'RESET' })}>
               ← Yeni torrent
