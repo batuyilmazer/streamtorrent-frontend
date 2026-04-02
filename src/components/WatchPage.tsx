@@ -2,9 +2,11 @@ import { useEffect, useReducer } from 'react';
 import { api, buildStreamUrl, type TorrentInfo, type StreamSession } from '@/lib/api';
 import { VideoPlayer } from './VideoPlayer';
 import { FileTree } from './FileTree';
+import { SaveButton } from './torrents/SaveButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { formatBytes } from '@/lib/utils';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { formatBytes, isVideoFile, getErrorMessage } from '@/lib/utils';
 
 type State =
   | { phase: 'loading' }
@@ -19,9 +21,7 @@ type Action =
 function reducer(state: State, action: Action): State {
   switch (action.type) {
     case 'READY': {
-      const firstVideoIndex = action.session.files.findIndex(f =>
-        /\.(mp4|webm|mkv|avi|mov|ts|m4v)$/i.test(f.name)
-      );
+      const firstVideoIndex = action.session.files.findIndex(f => isVideoFile(f.name));
       return {
         phase: 'watch',
         torrent: action.torrent,
@@ -57,7 +57,7 @@ export default function WatchPage({ torrentId }: Props) {
         if (!cancelled) dispatch({ type: 'READY', torrent, session });
       } catch (err) {
         if (!cancelled)
-          dispatch({ type: 'ERROR', message: err instanceof Error ? err.message : 'Yüklenemedi.' });
+          dispatch({ type: 'ERROR', message: getErrorMessage(err, 'Yüklenemedi.') });
       }
     }
     load();
@@ -67,10 +67,7 @@ export default function WatchPage({ torrentId }: Props) {
   if (state.phase === 'loading') {
     return (
       <div className="flex items-center gap-2 text-sm text-muted-foreground pt-8">
-        <svg className="size-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-        </svg>
+        <LoadingSpinner className="size-4" />
         Yükleniyor...
       </div>
     );
@@ -87,6 +84,8 @@ export default function WatchPage({ torrentId }: Props) {
     );
   }
 
+  const selectedFile = state.session.files.find(f => f.index === state.selectedFileIndex);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -94,16 +93,19 @@ export default function WatchPage({ torrentId }: Props) {
           <h1 className="font-medium truncate">{state.torrent.name}</h1>
           <p className="text-xs text-muted-foreground">{formatBytes(Number(state.torrent.size) || 0)}</p>
         </div>
-        <Button variant="ghost" size="sm" onClick={() => (window.location.href = '/')}>
-          ← Ana sayfa
-        </Button>
+        <div className="flex items-center gap-2 shrink-0">
+          <SaveButton torrentId={torrentId} />
+          <Button variant="ghost" size="sm" onClick={() => (window.location.href = '/')}>
+            ← Ana sayfa
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-4 items-start">
-        {state.session.files.find(f => f.index === state.selectedFileIndex) ? (
+        {selectedFile ? (
           <VideoPlayer
             src={buildStreamUrl(state.session.streamToken, state.selectedFileIndex)}
-            title={state.session.files.find(f => f.index === state.selectedFileIndex)!.name}
+            title={selectedFile.name}
           />
         ) : (
           <div className="aspect-video bg-black flex items-center justify-center text-sm text-muted-foreground rounded-md">

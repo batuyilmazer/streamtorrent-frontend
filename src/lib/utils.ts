@@ -12,3 +12,14 @@ export function formatBytes(bytes: number, decimals = 1): string {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(decimals))} ${sizes[i]}`;
 }
+
+export function getErrorMessage(err: unknown, fallback: string): string {
+  return err instanceof Error ? err.message : fallback;
+}
+
+export const VIDEO_EXTENSIONS = new Set(['mp4', 'webm', 'mkv', 'avi', 'mov', 'ts', 'm4v']);
+
+export function isVideoFile(filename: string): boolean {
+  const ext = filename.split('.').pop()?.toLowerCase() ?? '';
+  return VIDEO_EXTENSIONS.has(ext);
+}

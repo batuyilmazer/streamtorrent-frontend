@@ -1,7 +1,6 @@
 import { Badge } from '@/components/ui/badge';
-import { formatBytes } from '@/lib/utils';
+import { formatBytes, isVideoFile, cn } from '@/lib/utils';
 import type { FileEntry } from '@/lib/api';
-import { cn } from '@/lib/utils';
 
 interface Props {
   files: FileEntry[];
@@ -15,15 +14,13 @@ function getExtension(filename: string): string {
   return parts.length > 1 ? parts[parts.length - 1].toLowerCase() : '?';
 }
 
-const VIDEO_EXTS = new Set(['mp4', 'webm', 'mkv', 'avi', 'mov', 'ts', 'm4v']);
-
 export function FileTree({ files, selectedIndex, onSelect }: Props) {
   return (
     <ul className="space-y-0.5">
       {files.map((file) => {
         const displayName = file.name || file.path?.split('/').pop() || 'unknown';
         const ext = getExtension(displayName);
-        const isVideo = VIDEO_EXTS.has(ext);
+        const isVideo = isVideoFile(displayName);
         const isSelected = file.index === selectedIndex;
 
         return (
