@@ -1,10 +1,13 @@
 import { authStore } from './authStore';
 
-const API_BASE =
-  import.meta.env.PUBLIC_API_URL ??
-  (import.meta.env.PROD
-    ? 'https://api.film.bira.pizza'
-    : 'http://localhost:8080');
+const fallbackApiBase = import.meta.env.PROD
+  ? 'https://api.film.bira.pizza'
+  : 'http://localhost:8080';
+
+const API_BASE = (import.meta.env.PUBLIC_API_URL ?? fallbackApiBase)
+  .split(',')
+  .map((value) => value.trim())
+  .find(Boolean) ?? fallbackApiBase;
 
 export class ApiError extends Error {
   constructor(

@@ -1,10 +1,13 @@
 import type { MeUser, LoginRequest, RegisterRequest } from './api';
 
-const API_BASE =
-  import.meta.env.PUBLIC_API_URL ??
-  (import.meta.env.PROD
-    ? 'https://api.film.bira.pizza'
-    : 'http://localhost:8080');
+const fallbackApiBase = import.meta.env.PROD
+  ? 'https://api.film.bira.pizza'
+  : 'http://localhost:8080';
+
+const API_BASE = (import.meta.env.PUBLIC_API_URL ?? fallbackApiBase)
+  .split(',')
+  .map((value) => value.trim())
+  .find(Boolean) ?? fallbackApiBase;
 
 interface AuthState {
   accessToken: string | null;

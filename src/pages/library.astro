@@ -1,11 +1,8 @@
 ---
 import LibraryPage from '@/components/library/LibraryPage';
-import AppProviders from '@/components/providers/AppProviders';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 ---
 
 <BaseLayout title="StreamTorrent — Kütüphanem">
-  <AppProviders client:load>
-    <LibraryPage />
-  </AppProviders>
+  <LibraryPage client:load />
 </BaseLayout>
