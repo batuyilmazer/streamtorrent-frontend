@@ -1,11 +1,11 @@
 ---
 import WatchPage from '@/components/WatchPage';
-import BaseLayout from '@/layouts/BaseLayout.astro';
+import HomeLayout from '@/layouts/HomeLayout.astro';
 
 const { torrentId } = Astro.params;
 if (!torrentId) return Astro.redirect('/');
 ---
 
-<BaseLayout title="StreamTorrent — İzle">
+<HomeLayout title="StreamTorrent — İzle">
   <WatchPage client:load torrentId={torrentId} />
-</BaseLayout>
+</HomeLayout>
