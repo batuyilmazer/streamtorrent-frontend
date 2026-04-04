@@ -3,8 +3,6 @@ import { api, type TorrentInfo } from '@/lib/api';
 import { getErrorMessage } from '@/lib/utils';
 import { TorrentUploader } from './TorrentUploader';
 import { MagnetInput } from './MagnetInput';
-import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
 
 // --- State machine ---
 
@@ -28,23 +26,6 @@ function reducer(state: State, action: Action): State {
     default:
       return state;
   }
-}
-
-// --- Error banner ---
-
-function ErrorBanner({ message, onDismiss }: { message: string; onDismiss: () => void }) {
-  return (
-    <div className="flex items-center gap-3 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-      <span className="flex-1">{message}</span>
-      <button
-        onClick={onDismiss}
-        className="shrink-0 opacity-70 hover:opacity-100 transition-opacity"
-        aria-label="Kapat"
-      >
-        ✕
-      </button>
-    </div>
-  );
 }
 
 // --- Main app ---
@@ -79,34 +60,76 @@ export default function TorrentApp() {
   const isLoading = state.phase === 'loading';
 
   return (
-    <div className="space-y-4">
+    <div className="relative min-h-screen bg-[#eb3321] overflow-hidden">
+      {/* Error toast */}
       {'error' in state && state.error && (
-        <ErrorBanner
-          message={state.error}
-          onDismiss={() => dispatch({ type: 'RESET' })}
-        />
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-black/85 text-white px-4 py-3 text-sm rounded max-w-sm w-full shadow-lg">
+          <span className="flex-1">{state.error}</span>
+          <button
+            onClick={() => dispatch({ type: 'RESET' })}
+            className="shrink-0 opacity-70 hover:opacity-100 transition-opacity"
+            aria-label="Kapat"
+          >
+            ✕
+          </button>
+        </div>
       )}
 
-      <div className="mx-auto max-w-lg space-y-4 pt-8">
-        <div className="text-center space-y-1 mb-6">
-          <h1 className="text-2xl font-semibold tracking-tight">Torrent Yükle</h1>
-          <p className="text-sm text-muted-foreground">
-            .torrent dosyası yükleyin veya magnet linki yapıştırın
+      {/* Navbar */}
+      <nav className="relative flex items-center px-12 h-[78px]">
+        <button className="flex flex-col gap-[7px] shrink-0" aria-label="Menü">
+          <span className="block w-7 h-[3px] bg-white" />
+          <span className="block w-7 h-[3px] bg-white" />
+          <span className="block w-7 h-[3px] bg-white" />
+        </button>
+        <h1
+          className="absolute left-1/2 -translate-x-1/2 font-['Bahianita',sans-serif] text-5xl text-[#f7f2e5] whitespace-nowrap pointer-events-none select-none tracking-[-0.02em]"
+          style={{
+            textShadow: [
+              '2px 8px 0 #000', '-2px 8px 0 #000',
+              '0 10px 0 #000',  '0 6px 0 #000',
+              '2px 10px 0 #000', '-2px 10px 0 #000',
+              '2px 6px 0 #000',  '-2px 6px 0 #000',
+              '2px 0 0 #000',   '-2px 0 0 #000',
+              '0 2px 0 #000',   '0 -2px 0 #000',
+              '2px 2px 0 #000',  '-2px 2px 0 #000',
+              '2px -2px 0 #000', '-2px -2px 0 #000',
+              '0px 8px 0 #000',
+            ].join(', '),
+          }}
+        >
+          film.bira.pizza
+        </h1>
+      </nav>
+
+      {/* Main layout — 30 / 70 columns (fr splits space after gap); upload block toward center, video toward center */}
+      <div className="mx-auto grid max-w-[1360px] grid-cols-1 items-start gap-10 px-10 pt-16 pb-10 lg:grid-cols-[3fr_7fr]">
+        {/* Left: upload controls (~30%) */}
+        <div className="flex w-full min-w-0 justify-center lg:justify-end">
+          <div className="flex w-full max-w-[313px] shrink-0 flex-col items-center gap-8">
+            <TorrentUploader onTorrent={handleUpload} loading={isLoading} />
+            <p className="w-full text-center font-['Bahianita',sans-serif] text-[28px] leading-tight text-white">
+              veya Magnet Linki Yapıştırın:
+            </p>
+            <MagnetInput onMagnet={handleMagnet} loading={isLoading} />
+          </div>
+        </div>
+
+        <div className="hidden min-w-0 flex-col items-start pt-0 -mt-10 lg:flex">
+          <p className="mb-0 w-max max-w-full text-left font-['Bahianita',sans-serif] text-[40px] text-white">
+            Henüz bir torrent yüklemedin.
           </p>
-        </div>
-
-        <TorrentUploader onTorrent={handleUpload} loading={isLoading} />
-
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <Separator />
+          <div className="w-full min-w-0">
+            <img
+              src="/frames/stream-video-frame.svg"
+              alt=""
+              className="block h-auto w-[min(100%,810px)] min-w-[min(100%,380px)] min-h-[228px] max-h-[calc(90vh-220px)] max-w-none object-contain object-left"
+              width={810}
+              height={486}
+              draggable={false}
+            />
           </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">veya</span>
-          </div>
         </div>
-
-        <MagnetInput onMagnet={handleMagnet} loading={isLoading} />
       </div>
     </div>
   );

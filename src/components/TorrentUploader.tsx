@@ -1,6 +1,4 @@
 import { useRef, useState, useCallback } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface Props {
@@ -41,20 +39,52 @@ export function TorrentUploader({ onTorrent, loading }: Props) {
   };
 
   return (
-    <div className="space-y-2">
-      <Card
+    <div className="space-y-2 w-full max-w-[313px] mx-auto">
+      {/* aspect ratio matches SVG viewBox 313:204 */}
+      <div
         className={cn(
-          'flex flex-col items-center justify-center gap-3 border-2 border-dashed rounded-xl p-10 cursor-pointer transition-colors select-none',
-          isDragOver
-            ? 'border-primary bg-primary/5'
-            : 'border-border hover:border-muted-foreground/50',
+          'relative w-full cursor-pointer select-none transition-opacity duration-150',
           loading && 'pointer-events-none opacity-60',
+          isDragOver && 'opacity-80',
         )}
+        style={{ aspectRatio: '313 / 204' }}
         onDragOver={onDragOver}
         onDragLeave={onDragLeave}
         onDrop={onDrop}
         onClick={() => !loading && inputRef.current?.click()}
       >
+        {/* Figma SVG frame as background */}
+        <img
+          src="/frames/upload-box-frame.svg"
+          alt=""
+          className="absolute inset-0 w-full h-full"
+          draggable={false}
+        />
+
+        {/* Content centred over the cream area */}
+        <div className="relative z-10 flex flex-col items-center justify-center h-full pb-4">
+          {loading ? (
+            <svg
+              className="size-12 animate-spin text-black"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+            </svg>
+          ) : (
+            <>
+              <p className="font-['Bahianita',sans-serif] text-[80px] text-black leading-none">
+                YÜKLE
+              </p>
+              <p className="font-['Bahianita',sans-serif] text-2xl text-[#505050]">
+                .torrent
+              </p>
+            </>
+          )}
+        </div>
+
         <input
           ref={inputRef}
           type="file"
@@ -62,59 +92,10 @@ export function TorrentUploader({ onTorrent, loading }: Props) {
           className="hidden"
           onChange={onInputChange}
         />
-
-        {loading ? (
-          <svg
-            className="size-8 animate-spin text-primary"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            />
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-            />
-          </svg>
-        ) : (
-          <svg
-            className={cn('size-8 transition-colors', isDragOver ? 'text-primary' : 'text-muted-foreground')}
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={1.5}
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-          </svg>
-        )}
-
-        <div className="text-center space-y-1">
-          <p className="text-sm font-medium">
-            {loading ? 'Yükleniyor...' : '.torrent dosyasını buraya sürükleyin'}
-          </p>
-          {!loading && (
-            <p className="text-xs text-muted-foreground">ya da tıklayarak seçin</p>
-          )}
-        </div>
-
-        {!loading && (
-          <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); inputRef.current?.click(); }}>
-            Dosya Seç
-          </Button>
-        )}
-      </Card>
+      </div>
 
       {error && (
-        <p className="text-xs text-destructive px-1">{error}</p>
+        <p className="text-xs text-white/90 bg-black/25 px-2 py-1 rounded">{error}</p>
       )}
     </div>
   );

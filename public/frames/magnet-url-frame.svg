@@ -1,0 +1,10 @@
+<svg viewBox="0 0 302 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- outer black frame -->
+  <path d="M298.578 0L14.1161 8.6076L3.4221 23.6709L0 63.6962L281.467 68L302 54.6582L298.578 0Z" fill="black"/>
+  <!-- cream input area -->
+  <path d="M249 8L17.4339 13.9792L12 44.7292L244.402 49L249 8Z" fill="#F7F2E5"/>
+  <!-- yellow button background -->
+  <path d="M256.462 8.72549L253 49.7059L293 51L291.846 7L256.462 8.72549Z" fill="#FFC737"/>
+  <!-- arrow icon -->
+  <path d="M262.5 31.3511L263 24.6489L279.5 26.4362L274 19.734L275.5 17.5L284.5 26.4362L284.5 28.2234L275.5 38.5L272.5 37.1596L278.5 30.0106L262.5 31.3511Z" fill="#7E631F"/>
+</svg>
