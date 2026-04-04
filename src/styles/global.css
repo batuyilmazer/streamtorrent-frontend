@@ -136,16 +136,6 @@
     cursor: none !important;
   }
 
-  html.custom-cursor-enabled :where(
-    input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="checkbox"]):not([type="radio"]),
-    textarea,
-    [contenteditable="true"],
-    [contenteditable=""],
-    [contenteditable="plaintext-only"]
-  ) {
-    cursor: text !important;
-  }
-
   .cursor-overlay {
     opacity: 0;
     transform: translate3d(-100px, -100px, 0);

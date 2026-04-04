@@ -30,6 +30,29 @@ const TEXT_SELECTOR = [
 type CursorMode = 'default' | 'interactive' | 'text';
 const CURSOR_EASING = 0.32;
 const CURSOR_SNAP_DISTANCE = 0.35;
+const ARROW_CURSOR_SIZE = 48;
+const TEXT_CURSOR_VIEWBOX = { width: 266, height: 423 };
+const TEXT_CURSOR_HEIGHT = 48;
+const TEXT_CURSOR_WIDTH =
+  (TEXT_CURSOR_VIEWBOX.width / TEXT_CURSOR_VIEWBOX.height) * TEXT_CURSOR_HEIGHT;
+
+function getCursorMetrics(mode: CursorMode) {
+  if (mode === 'text') {
+    return {
+      width: TEXT_CURSOR_WIDTH,
+      height: TEXT_CURSOR_HEIGHT,
+      hotX: TEXT_CURSOR_WIDTH / 2,
+      hotY: TEXT_CURSOR_HEIGHT / 2,
+    };
+  }
+
+  return {
+    width: ARROW_CURSOR_SIZE,
+    height: ARROW_CURSOR_SIZE,
+    hotX: 1,
+    hotY: 1,
+  };
+}
 
 function resolveCursorMode(target: EventTarget | null): CursorMode {
   if (!(target instanceof Element)) {
@@ -70,12 +93,13 @@ export default function CursorOverlay() {
     const root = document.documentElement;
     root.classList.add('custom-cursor-enabled');
 
-    const applyPosition = (x: number, y: number) => {
+    const applyPosition = (x: number, y: number, mode = modeRef.current) => {
       if (!cursorRef.current) {
         return;
       }
 
-      cursorRef.current.style.transform = `translate3d(${x - 1}px, ${y - 1}px, 0)`;
+      const { hotX, hotY } = getCursorMetrics(mode);
+      cursorRef.current.style.transform = `translate3d(${x - hotX}px, ${y - hotY}px, 0)`;
     };
 
     const syncPosition = () => {
@@ -137,6 +161,7 @@ export default function CursorOverlay() {
 
       modeRef.current = nextMode;
       setMode(nextMode);
+      applyPosition(currentRef.current.x, currentRef.current.y, nextMode);
     };
 
     const handlePointer = (event: PointerEvent) => {
@@ -228,30 +253,60 @@ export default function CursorOverlay() {
     <div
       ref={cursorRef}
       aria-hidden="true"
-      data-visible={isVisible && mode !== 'text'}
+      data-visible={isVisible}
       data-interactive={mode === 'interactive'}
-      className="cursor-overlay fixed left-0 top-0 z-[200] size-12 pointer-events-none"
+      data-mode={mode}
+      className="cursor-overlay fixed left-0 top-0 z-[200] pointer-events-none"
+      style={{
+        width: mode === 'text' ? `${TEXT_CURSOR_WIDTH}px` : `${ARROW_CURSOR_SIZE}px`,
+        height: mode === 'text' ? `${TEXT_CURSOR_HEIGHT}px` : `${ARROW_CURSOR_SIZE}px`,
+      }}
     >
-      <svg
-        viewBox="0 0 395 395"
-        className="size-full"
-        fill="none"
-        shapeRendering="geometricPrecision"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M178.983 389.5L117.672 377.046L6 5.5L387 157.024V215.143L262.19 250.43L178.983 389.5Z"
-          fill="black"
-        />
-        <path
-          d="M59 54.5L146.576 327.5L218.826 204.546L348 164.95L59 54.5Z"
-          data-cursor-fill=""
-        />
-        <path
-          d="M146.671 329.5L59 54.5L219 204.5L146.671 329.5Z"
-          data-cursor-fill=""
-        />
-      </svg>
+      {mode === 'text' ? (
+        <svg
+          viewBox="0 0 266 423"
+          className="size-full"
+          fill="none"
+          shapeRendering="geometricPrecision"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M266 103.5V26.5L237 0H0V75L28.5 103.5H81.5V320H0V395L28.5 423H266V346L237 320H184V103.5H266Z"
+            fill="black"
+          />
+          <path
+            d="M233 31.5H34V70H113.5V350.5H34V389H233V350.5H154V70H233V31.5Z"
+            fill="#F7F2E5"
+          />
+          <path
+            d="M34 70V32.5L52.5 51.5H130.5V366L113.5 350.5V70H34Z"
+            fill="#DDD3BA"
+          />
+          <path d="M154 70V51.5H216L232.5 70H154Z" fill="#DDD3BA" />
+          <path d="M34 389V350.5L52.5 370.5H216L232.5 389H34Z" fill="#DDD3BA" />
+        </svg>
+      ) : (
+        <svg
+          viewBox="0 0 395 395"
+          className="size-full"
+          fill="none"
+          shapeRendering="geometricPrecision"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M178.983 389.5L117.672 377.046L6 5.5L387 157.024V215.143L262.19 250.43L178.983 389.5Z"
+            fill="black"
+          />
+          <path
+            d="M59 54.5L146.576 327.5L218.826 204.546L348 164.95L59 54.5Z"
+            data-cursor-fill=""
+          />
+          <path
+            d="M146.671 329.5L59 54.5L219 204.5L146.671 329.5Z"
+            data-cursor-fill=""
+          />
+        </svg>
+      )}
     </div>
   );
 }
