@@ -128,3 +128,41 @@
     @apply font-sans;
     }
 }
+
+@media (hover: hover) and (pointer: fine) {
+  html.custom-cursor-enabled,
+  html.custom-cursor-enabled body,
+  html.custom-cursor-enabled * {
+    cursor: none !important;
+  }
+
+  html.custom-cursor-enabled :where(
+    input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="checkbox"]):not([type="radio"]),
+    textarea,
+    [contenteditable="true"],
+    [contenteditable=""],
+    [contenteditable="plaintext-only"]
+  ) {
+    cursor: text !important;
+  }
+
+  .cursor-overlay {
+    opacity: 0;
+    transform: translate3d(-100px, -100px, 0);
+    transition: opacity 120ms ease;
+    will-change: transform, opacity;
+  }
+
+  .cursor-overlay[data-visible="true"] {
+    opacity: 1;
+  }
+
+  .cursor-overlay [data-cursor-fill] {
+    fill: #ffffff;
+    transition: fill 300ms ease;
+  }
+
+  .cursor-overlay[data-interactive="true"] [data-cursor-fill] {
+    fill: #eb3321;
+  }
+}
