@@ -87,8 +87,8 @@ export default function TorrentApp() {
         <MagnetInput onMagnet={handleMagnet} loading={isLoading} />
       </div>
 
-      <p className="absolute right-[55px] top-[141px] w-[192px] text-center font-['Bahianita',sans-serif] text-[48px] leading-none text-white">
-        Upload A Torrent
+      <p className="absolute right-[55px] top-[141px] w-[360px] whitespace-nowrap text-center font-['Bahianita',sans-serif] text-[48px] leading-none text-white">
+        Henüz bir torrent yüklemedin
       </p>
 
       <div className="absolute left-[418px] top-[190.5px] h-[486px] w-[810px]">
