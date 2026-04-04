@@ -17,7 +17,7 @@ export function TorrentCard({ torrent, onClick }: Props) {
       <CardContent className="flex items-center justify-between gap-4 py-4">
         <div className="min-w-0 space-y-0.5">
           <p className="font-medium truncate text-sm">{torrent.name}</p>
-          <p className="text-xs text-muted-foreground">{formatBytes(torrent.size)}</p>
+          <p className="text-xs text-muted-foreground">{formatBytes(Number(torrent.size))}</p>
         </div>
         <Badge variant="secondary" className="shrink-0">
           {torrent.fileList.length} dosya

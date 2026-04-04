@@ -8,6 +8,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "typecheck": "../streamtorrent-backend/node_modules/.bin/tsc --noEmit -p tsconfig.json",
+    "check": "npm run typecheck",
     "preview": "astro preview",
     "start": "HOST=0.0.0.0 PORT=8080 node ./dist/server/entry.mjs",
     "astro": "astro"
