@@ -8,7 +8,7 @@ export default function MenuButton() {
       type="button"
       onClick={() => setIsOpen(!isOpen)}
       aria-label={isOpen ? 'Menüyü kapat' : 'Menüyü aç'}
-      className="flex items-center justify-center cursor-pointer shrink-0 mt-2"
+      className="flex h-[34px] w-[29px] shrink-0 cursor-pointer items-center justify-center"
     >
       {isOpen ? (
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -18,7 +18,7 @@ export default function MenuButton() {
       ) : (
         <svg
           width="32"
-          height="42"
+          height="39"
           viewBox="0 0 31.8044 39.0681"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"

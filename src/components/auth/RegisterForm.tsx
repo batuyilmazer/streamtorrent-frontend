@@ -3,6 +3,7 @@ import { useAuth } from '@/components/auth/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { getErrorMessage } from '@/lib/utils';
 
 export function RegisterForm() {
   const { register, isLoading: authBootLoading } = useAuth();
@@ -36,7 +37,7 @@ export function RegisterForm() {
       await register({ email: email.trim(), password });
       window.location.href = '/';
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Kayıt oluşturulamadı.');
+      setError(getErrorMessage(err, 'Kayıt oluşturulamadı.'));
     } finally {
       setIsSubmitting(false);
     }

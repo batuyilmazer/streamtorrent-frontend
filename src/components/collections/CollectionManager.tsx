@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { getErrorMessage } from '@/lib/utils';
 
 interface Props {
   open: boolean;
@@ -51,7 +52,7 @@ export function CollectionManager({ open, onOpenChange, mode, collection, onSucc
       }
       onOpenChange(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Bir hata oluştu.');
+      setError(getErrorMessage(err, 'Bir hata oluştu.'));
     } finally {
       setLoading(false);
     }

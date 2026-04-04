@@ -3,6 +3,7 @@ import { api, type TwoFactorScope } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { getErrorMessage } from '@/lib/utils';
 
 interface TwoFactorFormProps {
   scope: TwoFactorScope;
@@ -38,7 +39,7 @@ export function TwoFactorForm({
         onTokenSubmit?.(normalized);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Token doğrulanamadı.');
+      setError(getErrorMessage(err, 'Token doğrulanamadı.'));
     } finally {
       setIsSubmitting(false);
     }

@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { getErrorMessage as getNormalizedErrorMessage } from './errors';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -14,7 +15,7 @@ export function formatBytes(bytes: number, decimals = 1): string {
 }
 
 export function getErrorMessage(err: unknown, fallback: string): string {
-  return err instanceof Error ? err.message : fallback;
+  return getNormalizedErrorMessage(err, fallback);
 }
 
 export const VIDEO_EXTENSIONS = new Set(['mp4', 'webm', 'mkv', 'avi', 'mov', 'ts', 'm4v']);

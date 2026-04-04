@@ -40,7 +40,6 @@ export function TorrentUploader({ onTorrent, loading }: Props) {
 
   return (
     <div className="space-y-2 w-full max-w-[313px] mx-auto">
-      {/* aspect ratio matches SVG viewBox 313:204 */}
       <div
         className={cn(
           'relative w-full cursor-pointer select-none transition-opacity duration-150',
@@ -48,12 +47,12 @@ export function TorrentUploader({ onTorrent, loading }: Props) {
           isDragOver && 'opacity-80',
         )}
         style={{ aspectRatio: '313 / 204' }}
+        data-node-id="72:52"
         onDragOver={onDragOver}
         onDragLeave={onDragLeave}
         onDrop={onDrop}
         onClick={() => !loading && inputRef.current?.click()}
       >
-        {/* Figma SVG frame as background */}
         <img
           src="/frames/upload-box-frame.svg"
           alt=""
@@ -61,11 +60,10 @@ export function TorrentUploader({ onTorrent, loading }: Props) {
           draggable={false}
         />
 
-        {/* Content centred over the cream area */}
-        <div className="relative z-10 flex flex-col items-center justify-center h-full pb-4">
+        <div className="absolute left-[100px] top-[53px] z-10 flex w-[130px] flex-col items-center gap-[6px] text-center">
           {loading ? (
             <svg
-              className="size-12 animate-spin text-black"
+              className="mx-auto mt-8 size-12 animate-spin text-black"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -75,10 +73,10 @@ export function TorrentUploader({ onTorrent, loading }: Props) {
             </svg>
           ) : (
             <>
-              <p className="font-['Bahianita',sans-serif] text-[80px] text-black leading-none">
+              <p className="w-full font-['Bahianita',sans-serif] text-[96px] leading-[0.7] text-black">
                 YÜKLE
               </p>
-              <p className="font-['Bahianita',sans-serif] text-2xl text-[#505050]">
+              <p className="w-full font-['Bahianita',sans-serif] text-[24px] leading-none text-[#505050]">
                 .torrent
               </p>
             </>

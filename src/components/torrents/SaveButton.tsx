@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { api } from '@/lib/api';
 import { Button } from '@/components/ui/button';
+import { showErrorToast } from '@/lib/toast';
 
 interface Props {
   torrentId: string;
@@ -38,8 +39,8 @@ export function SaveButton({ torrentId }: Props) {
         await api.userTorrents.save(torrentId);
         setIsSaved(true);
       }
-    } catch {
-      // silent
+    } catch (err) {
+      showErrorToast(err, isSaved ? 'Torrent kaydı kaldırılamadı.' : 'Torrent kaydedilemedi.');
     } finally {
       setLoading(false);
     }

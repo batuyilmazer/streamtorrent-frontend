@@ -3,6 +3,7 @@ import { useAuth } from '@/components/auth/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { getErrorMessage } from '@/lib/utils';
 
 export function LoginForm() {
   const { login, isLoading: authBootLoading } = useAuth();
@@ -26,7 +27,7 @@ export function LoginForm() {
       const next = params.get('next') ?? '/';
       window.location.href = next;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Giriş yapılamadı.');
+      setError(getErrorMessage(err, 'Giriş yapılamadı.'));
     } finally {
       setIsSubmitting(false);
     }

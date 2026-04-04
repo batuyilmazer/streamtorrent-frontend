@@ -3,7 +3,8 @@ import { api, type TorrentInfo } from '@/lib/api';
 import { getErrorMessage } from '@/lib/utils';
 import { TorrentUploader } from './TorrentUploader';
 import { MagnetInput } from './MagnetInput';
-import MenuButton from '@/components/layout/MenuButton';
+import { FilmBiraPizzaNavbar } from '@/components/layout/FilmBiraPizzaNavbar';
+import { FilmPageStage } from '@/components/layout/FilmPageStage';
 
 // --- State machine ---
 
@@ -61,7 +62,7 @@ export default function TorrentApp() {
   const isLoading = state.phase === 'loading';
 
   return (
-    <div className="relative min-h-screen bg-[#eb3321] overflow-hidden">
+    <FilmPageStage>
       {/* Error toast */}
       {'error' in state && state.error && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-black/85 text-white px-4 py-3 text-sm rounded max-w-sm w-full shadow-lg">
@@ -76,58 +77,28 @@ export default function TorrentApp() {
         </div>
       )}
 
-      {/* Navbar */}
-      <nav className="relative flex items-center px-12 h-[78px]">
-        <MenuButton />
-        <h1
-          className="absolute left-1/2 -translate-x-1/2 font-['Bahianita',sans-serif] text-5xl text-[#f7f2e5] whitespace-nowrap pointer-events-none select-none tracking-[-0.02em]"
-          style={{
-            textShadow: [
-              '2px 8px 0 #000', '-2px 8px 0 #000',
-              '0 10px 0 #000',  '0 6px 0 #000',
-              '2px 10px 0 #000', '-2px 10px 0 #000',
-              '2px 6px 0 #000',  '-2px 6px 0 #000',
-              '2px 0 0 #000',   '-2px 0 0 #000',
-              '0 2px 0 #000',   '0 -2px 0 #000',
-              '2px 2px 0 #000',  '-2px 2px 0 #000',
-              '2px -2px 0 #000', '-2px -2px 0 #000',
-              '0px 8px 0 #000',
-            ].join(', '),
-          }}
-        >
-          film.bira.pizza
-        </h1>
-      </nav>
+      <FilmBiraPizzaNavbar />
 
-      {/* Main layout — 30 / 70 columns (fr splits space after gap); upload block toward center, video toward center */}
-      <div className="mx-auto grid max-w-[1360px] grid-cols-1 items-start gap-10 px-10 pt-16 pb-10 lg:grid-cols-[3fr_7fr]">
-        {/* Left: upload controls (~30%) */}
-        <div className="flex w-full min-w-0 justify-center lg:justify-end">
-          <div className="flex w-full max-w-[313px] shrink-0 flex-col items-center gap-8">
-            <TorrentUploader onTorrent={handleUpload} loading={isLoading} />
-            <p className="w-full text-center font-['Bahianita',sans-serif] text-[28px] leading-tight text-white">
-              veya Magnet Linki Yapıştırın:
-            </p>
-            <MagnetInput onMagnet={handleMagnet} loading={isLoading} />
-          </div>
-        </div>
-
-        <div className="hidden min-w-0 flex-col items-start pt-0 -mt-10 lg:flex">
-          <p className="mb-0 w-max max-w-full text-left font-['Bahianita',sans-serif] text-[40px] text-white">
-            Henüz bir torrent yüklemedin.
-          </p>
-          <div className="w-full min-w-0">
-            <img
-              src="/frames/stream-video-frame.svg"
-              alt=""
-              className="block h-auto w-[min(100%,810px)] min-w-[min(100%,380px)] min-h-[228px] max-h-[calc(90vh-220px)] max-w-none object-contain object-left"
-              width={810}
-              height={486}
-              draggable={false}
-            />
-          </div>
-        </div>
+      <div className="absolute left-[38px] top-[171px] flex w-[313px] flex-col items-center gap-[33px]">
+        <TorrentUploader onTorrent={handleUpload} loading={isLoading} />
+        <p className="w-full text-center font-['Bahianita',sans-serif] text-[32px] leading-none text-white">
+          veya Magnet Linki Yapıştırın:
+        </p>
+        <MagnetInput onMagnet={handleMagnet} loading={isLoading} />
       </div>
-    </div>
+
+      <p className="absolute right-[55px] top-[141px] w-[192px] text-center font-['Bahianita',sans-serif] text-[48px] leading-none text-white">
+        Upload A Torrent
+      </p>
+
+      <div className="absolute left-[418px] top-[190.5px] h-[486px] w-[810px]">
+        <img
+          src="/frames/stream-video-frame.svg"
+          alt=""
+          className="block h-full w-full"
+          draggable={false}
+        />
+      </div>
+    </FilmPageStage>
   );
 }
