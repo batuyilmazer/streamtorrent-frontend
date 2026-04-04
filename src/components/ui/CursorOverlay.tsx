@@ -28,6 +28,8 @@ const TEXT_SELECTOR = [
 ].join(', ');
 
 type CursorMode = 'default' | 'interactive' | 'text';
+const CURSOR_EASING = 0.32;
+const CURSOR_SNAP_DISTANCE = 0.35;
 
 function resolveCursorMode(target: EventTarget | null): CursorMode {
   if (!(target instanceof Element)) {
@@ -50,7 +52,8 @@ export default function CursorOverlay() {
   const frameRef = useRef<number | null>(null);
   const modeRef = useRef<CursorMode>('default');
   const visibleRef = useRef(false);
-  const pointRef = useRef({ x: -100, y: -100 });
+  const targetRef = useRef({ x: -100, y: -100 });
+  const currentRef = useRef({ x: -100, y: -100 });
   const [mode, setMode] = useState<CursorMode>('default');
   const [isVisible, setIsVisible] = useState(false);
 
@@ -67,22 +70,52 @@ export default function CursorOverlay() {
     const root = document.documentElement;
     root.classList.add('custom-cursor-enabled');
 
-    const syncPosition = () => {
-      frameRef.current = null;
-
+    const applyPosition = (x: number, y: number) => {
       if (!cursorRef.current) {
         return;
       }
 
-      const { x, y } = pointRef.current;
       cursorRef.current.style.transform = `translate3d(${x - 1}px, ${y - 1}px, 0)`;
     };
 
+    const syncPosition = () => {
+      const target = targetRef.current;
+      const current = currentRef.current;
+      const deltaX = target.x - current.x;
+      const deltaY = target.y - current.y;
+      const distance = Math.hypot(deltaX, deltaY);
+
+      if (distance <= CURSOR_SNAP_DISTANCE) {
+        current.x = target.x;
+        current.y = target.y;
+        applyPosition(current.x, current.y);
+        frameRef.current = null;
+        return;
+      }
+
+      current.x += deltaX * CURSOR_EASING;
+      current.y += deltaY * CURSOR_EASING;
+      applyPosition(current.x, current.y);
+      frameRef.current = window.requestAnimationFrame(syncPosition);
+    };
+
     const queuePosition = (x: number, y: number) => {
-      pointRef.current = { x, y };
+      targetRef.current = { x, y };
 
       if (frameRef.current !== null) {
         return;
+      }
+
+      frameRef.current = window.requestAnimationFrame(syncPosition);
+    };
+
+    const syncImmediately = (x: number, y: number) => {
+      targetRef.current = { x, y };
+      currentRef.current = { x, y };
+      applyPosition(x, y);
+
+      if (frameRef.current !== null) {
+        window.cancelAnimationFrame(frameRef.current);
       }
 
       frameRef.current = window.requestAnimationFrame(syncPosition);
@@ -111,13 +144,26 @@ export default function CursorOverlay() {
         return;
       }
 
+      const nextVisible = true;
+      const wasVisible = visibleRef.current;
       updateVisible(true);
       updateMode(resolveCursorMode(event.target));
+
+      if (!wasVisible && nextVisible) {
+        syncImmediately(event.clientX, event.clientY);
+        return;
+      }
+
       queuePosition(event.clientX, event.clientY);
     };
 
     const hideCursor = () => {
       updateVisible(false);
+
+      if (frameRef.current !== null) {
+        window.cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+      }
     };
 
     const refreshModeFromElement = (element: Element | null) => {
@@ -125,7 +171,7 @@ export default function CursorOverlay() {
     };
 
     const handleScroll = () => {
-      const hovered = document.elementFromPoint(pointRef.current.x, pointRef.current.y);
+      const hovered = document.elementFromPoint(targetRef.current.x, targetRef.current.y);
       refreshModeFromElement(hovered);
     };
 
@@ -147,6 +193,11 @@ export default function CursorOverlay() {
 
       root.classList.remove('custom-cursor-enabled');
       hideCursor();
+
+      if (frameRef.current !== null) {
+        window.cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+      }
     };
 
     document.addEventListener('pointermove', handlePointer, true);
