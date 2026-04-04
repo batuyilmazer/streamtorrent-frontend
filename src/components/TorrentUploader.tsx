@@ -40,32 +40,30 @@ export function TorrentUploader({ onTorrent, loading }: Props) {
 
   return (
     <div className="space-y-2 w-full max-w-[313px] mx-auto">
-      {/* aspect ratio matches SVG viewBox 313:204 */}
       <div
         className={cn(
-          'relative w-full cursor-pointer select-none transition-opacity duration-150',
+          'group relative w-full cursor-pointer select-none rounded-[20px] transform-gpu transition-[transform,filter,opacity] duration-300 ease-in-out hover:brightness-105 hover:drop-shadow-[0_12px_0_rgba(0,0,0,1)] active:translate-y-px',
           loading && 'pointer-events-none opacity-60',
-          isDragOver && 'opacity-80',
+          isDragOver && 'brightness-105 drop-shadow-[0_12px_0_rgba(0,0,0,1)]',
         )}
         style={{ aspectRatio: '313 / 204' }}
+        data-node-id="72:52"
         onDragOver={onDragOver}
         onDragLeave={onDragLeave}
         onDrop={onDrop}
         onClick={() => !loading && inputRef.current?.click()}
       >
-        {/* Figma SVG frame as background */}
         <img
           src="/frames/upload-box-frame.svg"
           alt=""
-          className="absolute inset-0 w-full h-full"
+          className="absolute inset-0 h-full w-full transition-[filter] duration-300 ease-in-out"
           draggable={false}
         />
 
-        {/* Content centred over the cream area */}
-        <div className="relative z-10 flex flex-col items-center justify-center h-full pb-4">
+        <div className="absolute left-[100px] top-[53px] z-10 flex w-[130px] flex-col items-center gap-[6px] text-center transition-transform duration-300 ease-in-out group-hover:scale-[1.03] group-active:translate-y-px">
           {loading ? (
             <svg
-              className="size-12 animate-spin text-black"
+              className="mx-auto mt-8 size-12 animate-spin text-black"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -75,10 +73,10 @@ export function TorrentUploader({ onTorrent, loading }: Props) {
             </svg>
           ) : (
             <>
-              <p className="font-['Bahianita',sans-serif] text-[80px] text-black leading-none">
+              <p className="w-full font-['Bahianita',sans-serif] text-[96px] leading-[0.7] text-black transition-[text-shadow] duration-300 ease-in-out">
                 YÜKLE
               </p>
-              <p className="font-['Bahianita',sans-serif] text-2xl text-[#505050]">
+              <p className="w-full font-['Bahianita',sans-serif] text-[24px] leading-none text-[#505050] transition-[text-shadow] duration-300 ease-in-out">
                 .torrent
               </p>
             </>

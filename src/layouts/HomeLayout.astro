@@ -1,5 +1,7 @@
 ---
 import '@/styles/global.css';
+import CursorOverlay from '@/components/ui/CursorOverlay';
+import ToastViewport from '@/components/ui/ToastViewport';
 
 interface Props {
   title: string;
@@ -28,5 +30,7 @@ const { title, description } = Astro.props;
   </head>
   <body class="min-h-screen overflow-x-hidden bg-[#eb3321]">
     <slot />
+    <CursorOverlay client:load />
+    <ToastViewport client:load />
   </body>
 </html>

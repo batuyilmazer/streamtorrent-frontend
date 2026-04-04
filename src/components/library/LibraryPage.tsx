@@ -5,6 +5,7 @@ import { TorrentCard } from '@/components/TorrentCard';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { getErrorMessage } from '@/lib/utils';
+import { showErrorToast } from '@/lib/toast';
 
 export default function LibraryPage() {
   const { user, isLoading: authLoading } = useAuth();
@@ -35,8 +36,8 @@ export default function LibraryPage() {
     try {
       await api.userTorrents.remove(torrentId);
       setItems((prev) => prev.filter((i) => i.torrent.id !== torrentId));
-    } catch {
-      // silent
+    } catch (err) {
+      showErrorToast(err, 'Torrent kütüphaneden kaldırılamadı.');
     }
   }, []);
 

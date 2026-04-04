@@ -1,4 +1,3 @@
-import { Badge } from '@/components/ui/badge';
 import { formatBytes, isVideoFile, cn } from '@/lib/utils';
 import type { FileEntry } from '@/lib/api';
 
@@ -6,6 +5,7 @@ interface Props {
   files: FileEntry[];
   selectedIndex: number | null;
   onSelect: (index: number) => void;
+  className?: string;
 }
 
 function getExtension(filename: string): string {
@@ -14,9 +14,9 @@ function getExtension(filename: string): string {
   return parts.length > 1 ? parts[parts.length - 1].toLowerCase() : '?';
 }
 
-export function FileTree({ files, selectedIndex, onSelect }: Props) {
+export function FileTree({ files, selectedIndex, onSelect, className }: Props) {
   return (
-    <ul className="space-y-0.5">
+    <ul className={cn('space-y-1.5', className)}>
       {files.map((file) => {
         const displayName = file.name || file.path?.split('/').pop() || 'unknown';
         const ext = getExtension(displayName);
@@ -27,24 +27,28 @@ export function FileTree({ files, selectedIndex, onSelect }: Props) {
           <li key={file.index}>
             <button
               className={cn(
-                'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors text-sm',
+                "flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left font-['Bahianita',sans-serif] text-[20px] leading-none transition-colors",
                 isSelected
-                  ? 'bg-accent text-accent-foreground'
-                  : 'hover:bg-muted text-foreground',
-                !isVideo && 'opacity-50 cursor-not-allowed',
+                  ? 'bg-black text-[#f7f2e5]'
+                  : 'text-black hover:bg-black/10',
+                !isVideo && 'cursor-not-allowed opacity-45',
               )}
               title={file.path || file.name}
               onClick={() => isVideo && onSelect(file.index)}
               disabled={!isVideo}
             >
-              <span className="truncate flex-1 font-medium">{displayName}</span>
-              <span className="shrink-0 text-xs text-muted-foreground">{formatBytes(file.size)}</span>
-              <Badge
-                variant={isSelected ? 'default' : 'secondary'}
-                className="shrink-0 text-xs uppercase"
+              <span className="truncate flex-1">{displayName}</span>
+              <span className={cn('shrink-0 text-[13px] text-[#505050]', isSelected && 'text-[#f7f2e5]/70')}>
+                {formatBytes(file.size, 0)}
+              </span>
+              <span
+                className={cn(
+                  'shrink-0 border border-black px-1 py-0 text-[10px] uppercase leading-none text-black',
+                  isSelected && 'border-[#f7f2e5] text-[#f7f2e5]',
+                )}
               >
                 {ext}
-              </Badge>
+              </span>
             </button>
           </li>
         );

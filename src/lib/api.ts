@@ -1,4 +1,5 @@
 import { authStore } from './authStore';
+import { createApiError } from './errors';
 
 const fallbackApiBase = import.meta.env.PROD
   ? 'https://api.film.bira.pizza'
@@ -8,17 +9,6 @@ const API_BASE = (import.meta.env.PUBLIC_API_URL ?? fallbackApiBase)
   .split(',')
   .map((value) => value.trim())
   .find(Boolean) ?? fallbackApiBase;
-
-export class ApiError extends Error {
-  constructor(
-    public statusCode: number,
-    public code: string,
-    message: string,
-  ) {
-    super(message);
-    this.name = 'ApiError';
-  }
-}
 
 export { API_BASE };
 
@@ -43,23 +33,15 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
         res = await fetch(url, { ...init, credentials: 'include', headers });
         if (res.ok) return res.json() as Promise<T>;
         const retryBody = await res.json().catch(() => ({}));
-        throw new ApiError(
-          res.status,
-          retryBody.error ?? 'UNKNOWN',
-          retryBody.message ?? res.statusText,
-        );
+        throw createApiError(res.status, retryBody, res.statusText);
       }
     }
-    throw new ApiError(401, body.error ?? 'UNKNOWN', body.message ?? res.statusText);
+    throw createApiError(401, body, res.statusText);
   }
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new ApiError(
-      res.status,
-      body.error ?? 'UNKNOWN',
-      body.message ?? res.statusText,
-    );
+    throw createApiError(res.status, body, res.statusText);
   }
 
   return res.json() as Promise<T>;

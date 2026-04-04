@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { formatBytes, getErrorMessage } from '@/lib/utils';
+import { showErrorToast } from '@/lib/toast';
 
 interface Props {
   collectionId: string;
@@ -44,8 +45,8 @@ export default function CollectionDetail({ collectionId }: Props) {
       setCollection((prev) =>
         prev ? { ...prev, items: prev.items.filter((i) => i.torrentId !== torrentId) } : prev,
       );
-    } catch {
-      // silent
+    } catch (err) {
+      showErrorToast(err, 'Torrent koleksiyondan kaldırılamadı.');
     }
   }, [collection]);
 
@@ -55,8 +56,8 @@ export default function CollectionDetail({ collectionId }: Props) {
     try {
       await api.collections.delete(collection.id);
       window.location.href = '/collections';
-    } catch {
-      // silent
+    } catch (err) {
+      showErrorToast(err, 'Koleksiyon silinemedi.');
     }
   }, [collection]);
 

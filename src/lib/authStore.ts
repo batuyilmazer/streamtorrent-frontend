@@ -1,4 +1,5 @@
 import type { MeUser, LoginRequest, RegisterRequest } from './api';
+import { createApiError, getErrorMessage } from './errors';
 
 const fallbackApiBase = import.meta.env.PROD
   ? 'https://api.film.bira.pizza'
@@ -206,7 +207,7 @@ export const authStore = {
     });
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
-      throw new Error(body.message ?? 'Giriş yapılamadı.');
+      throw createApiError(res.status, body, res.statusText);
     }
     const data = await res.json();
     const user = await rawMe(data.access);
@@ -229,7 +230,7 @@ export const authStore = {
     });
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
-      throw new Error(body.message ?? 'Kayıt oluşturulamadı.');
+      throw createApiError(res.status, body, res.statusText);
     }
     const data = await res.json();
     const user = await rawMe(data.access);
@@ -244,16 +245,24 @@ export const authStore = {
   },
 
   async logout(): Promise<void> {
+    let logoutError: Error | null = null;
     try {
-      await fetch(`${API_BASE}/auth/logout`, {
+      const res = await fetch(`${API_BASE}/auth/logout`, {
         method: 'POST',
         credentials: 'include',
       });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        logoutError = createApiError(res.status, body, res.statusText);
+      }
+    } catch (err) {
+      logoutError = new Error(getErrorMessage(err, 'Çıkış yapılamadı.'));
     } finally {
       clearRefreshTimer();
       update({ accessToken: null, user: null, isLoading: false, sessionExpired: false });
       broadcast('LOGOUT');
     }
+    if (logoutError) throw logoutError;
   },
 
   handleAuthFailure(): void {

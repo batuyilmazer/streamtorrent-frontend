@@ -171,7 +171,7 @@ function ProfileContent() {
       await api.auth.sendTwoFactor({ scope: 'verify-email' });
       setVerifyStep('code');
     } catch (err) {
-      setVerifyError(err instanceof Error ? err.message : 'Kod gönderilemedi.');
+      setVerifyError(getErrorMessage(err, 'Kod gönderilemedi.'));
       setVerifyStep('idle');
     }
   }
