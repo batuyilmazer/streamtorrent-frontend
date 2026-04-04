@@ -19,7 +19,13 @@ const brandClass =
   "absolute left-1/2 top-[26px] -translate-x-1/2 whitespace-nowrap font-['Bahianita',sans-serif] text-[48px] leading-none text-[#f7f2e5]";
 
 const navLinkClass =
-  "font-['Bahianita',sans-serif] text-[36px] leading-none text-white transition-opacity hover:opacity-80";
+  "font-['Bahianita',sans-serif] text-[36px] leading-none text-white transition-all duration-300 ease-in-out hover:opacity-95 hover:[text-shadow:0_4px_0_rgba(0,0,0,1)] active:translate-y-px";
+
+const authFrameButtonClass =
+  "group relative block h-[65px] w-[160px] transform-gpu transition-[transform,filter] duration-300 ease-in-out hover:brightness-105 hover:drop-shadow-[0_8px_0_rgba(0,0,0,1)] active:translate-y-px";
+
+const authFrameLabelClass =
+  "absolute inset-x-[4px] top-[4px] flex h-[48px] items-center justify-center font-['Bahianita',sans-serif] text-[36px] leading-none text-black transition-transform duration-300 ease-in-out group-hover:scale-[1.03] group-active:translate-y-px";
 
 export function FilmBiraPizzaNavbar() {
   const { user, isLoading, sessionExpired } = useAuth();
@@ -72,14 +78,14 @@ export function FilmBiraPizzaNavbar() {
                 <a href="/profile" className={navLinkClass}>
                   Profil
                 </a>
-                <a href="/library" className="relative block h-[65px] w-[160px] transition-transform hover:translate-y-px">
+                <a href="/library" className={authFrameButtonClass}>
                   <img
                     src="/frames/navbar-auth-button.svg"
                     alt=""
                     className="absolute inset-0 h-full w-full"
                     draggable={false}
                   />
-                  <span className="absolute inset-x-[4px] top-[4px] flex h-[48px] items-center justify-center font-['Bahianita',sans-serif] text-[36px] leading-none text-black">
+                  <span className={authFrameLabelClass}>
                     Kütüphanem
                   </span>
                 </a>
@@ -89,14 +95,14 @@ export function FilmBiraPizzaNavbar() {
                 <a href="/login" className={navLinkClass}>
                   Oturum Aç
                 </a>
-                <a href="/register" className="relative block h-[65px] w-[160px] transition-transform hover:translate-y-px">
+                <a href="/register" className={authFrameButtonClass}>
                   <img
                     src="/frames/navbar-auth-button.svg"
                     alt=""
                     className="absolute inset-0 h-full w-full"
                     draggable={false}
                   />
-                  <span className="absolute inset-x-[4px] top-[4px] flex h-[48px] items-center justify-center font-['Bahianita',sans-serif] text-[36px] leading-none text-black">
+                  <span className={authFrameLabelClass}>
                     Hesap Oluştur
                   </span>
                 </a>
