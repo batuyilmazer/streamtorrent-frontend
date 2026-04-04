@@ -3,6 +3,7 @@ import { api, type TorrentInfo } from '@/lib/api';
 import { getErrorMessage } from '@/lib/utils';
 import { TorrentUploader } from './TorrentUploader';
 import { MagnetInput } from './MagnetInput';
+import MenuButton from '@/components/layout/MenuButton';
 
 // --- State machine ---
 
@@ -77,11 +78,7 @@ export default function TorrentApp() {
 
       {/* Navbar */}
       <nav className="relative flex items-center px-12 h-[78px]">
-        <button className="flex flex-col gap-[7px] shrink-0" aria-label="Menü">
-          <span className="block w-7 h-[3px] bg-white" />
-          <span className="block w-7 h-[3px] bg-white" />
-          <span className="block w-7 h-[3px] bg-white" />
-        </button>
+        <MenuButton />
         <h1
           className="absolute left-1/2 -translate-x-1/2 font-['Bahianita',sans-serif] text-5xl text-[#f7f2e5] whitespace-nowrap pointer-events-none select-none tracking-[-0.02em]"
           style={{

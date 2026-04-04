@@ -4,6 +4,7 @@ import { useAuth } from '@/components/auth/AuthProvider';
 import { FileTree } from './FileTree';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { isVideoFile, getErrorMessage } from '@/lib/utils';
+import MenuButton from '@/components/layout/MenuButton';
 
 // --- Constants ---
 
@@ -127,15 +128,7 @@ export default function WatchPage({ torrentId }: Props) {
   // Navbar — shared across all states
   const Navbar = (
     <nav className="relative flex items-center px-12 h-[78px]">
-      <button
-        className="flex flex-col gap-[7px] shrink-0"
-        aria-label="Ana sayfa"
-        onClick={() => { window.location.href = '/'; }}
-      >
-        <span className="block w-7 h-[3px] bg-white" />
-        <span className="block w-7 h-[3px] bg-white" />
-        <span className="block w-7 h-[3px] bg-white" />
-      </button>
+      <MenuButton />
       <h1
         className="absolute left-1/2 -translate-x-1/2 font-['Bahianita',sans-serif] text-5xl text-[#f7f2e5] whitespace-nowrap pointer-events-none select-none tracking-[-0.02em]"
         style={{ textShadow: TEXT_SHADOW }}

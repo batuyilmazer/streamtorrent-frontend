@@ -50,7 +50,7 @@ export function MagnetInput({ onMagnet, loading }: Props) {
           onKeyDown={onKeyDown}
           disabled={loading}
           className="absolute inset-0 ml-4 w-[78%] h-[90%] bg-transparent border-none outline-none font-['Bahianita',sans-serif] text-lg text-black placeholder:text-[#b8b8b8] disabled:opacity-50"
-          style={{ paddingLeft: '6%', paddingRight: '20%' }}
+          style={{ paddingLeft: '6%', paddingRight: '5%'}}
         />
         {/* Transparent click target over the yellow button area (x 253–293 / 302) */}
         <button
