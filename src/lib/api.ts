@@ -1,38 +1,28 @@
 import { authStore } from './authStore';
 import { createApiError } from './errors';
-
-const fallbackApiBase = import.meta.env.PROD
-  ? 'https://api.film.bira.pizza'
-  : 'http://localhost:8080';
-
-const API_BASE = (import.meta.env.PUBLIC_API_URL ?? fallbackApiBase)
-  .split(',')
-  .map((value) => value.trim())
-  .find(Boolean) ?? fallbackApiBase;
+import { API_BASE } from './apiBase';
+import { fetchApi, mergeHeaders, safeJson } from './http';
 
 export { API_BASE };
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const headers: Record<string, string> = {
-    ...(init?.headers as Record<string, string> | undefined),
-  };
+  const headers = mergeHeaders(init?.headers);
   const token = authStore.getAccessToken();
   if (token && !headers['Authorization']) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const url = `${API_BASE}${path}`;
-  let res = await fetch(url, { ...init, credentials: 'include', headers });
+  let res = await fetchApi(path, { ...init, headers });
 
   if (res.status === 401) {
-    const body = await res.json().catch(() => ({}));
+    const body = await safeJson<Record<string, unknown>>(res);
     if (body.error === 'TOKEN_EXPIRED') {
       const newToken = await authStore.forceRefresh();
       if (newToken) {
         headers['Authorization'] = `Bearer ${newToken}`;
-        res = await fetch(url, { ...init, credentials: 'include', headers });
+        res = await fetchApi(path, { ...init, headers });
         if (res.ok) return res.json() as Promise<T>;
-        const retryBody = await res.json().catch(() => ({}));
+        const retryBody = await safeJson<Record<string, unknown>>(res);
         throw createApiError(res.status, retryBody, res.statusText);
       }
     }
@@ -40,7 +30,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   }
 
   if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
+    const body = await safeJson<Record<string, unknown>>(res);
     throw createApiError(res.status, body, res.statusText);
   }
 

@@ -1,69 +1,29 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/components/auth/AuthProvider';
-import { api, type CollectionWithItems, type CollectionInfo } from '@/lib/api';
-import { CollectionManager } from './CollectionManager';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { formatBytes, getErrorMessage } from '@/lib/utils';
-import { showErrorToast } from '@/lib/toast';
+import { CollectionManagerDialog } from '@/features/collections/components/CollectionManagerDialog';
+import { useCollectionDetailScreen } from '@/features/collections/hooks/useCollectionDetailScreen';
+import { formatBytes } from '@/lib/utils';
 
 interface Props {
   collectionId: string;
 }
 
-export default function CollectionDetail({ collectionId }: Props) {
+export default function CollectionDetailScreen({ collectionId }: Props) {
   const { user, isLoading: authLoading } = useAuth();
-  const [collection, setCollection] = useState<CollectionWithItems | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const {
+    collection,
+    loading,
+    error,
+    isOwner,
+    removeItem,
+    removeCurrentCollection,
+    mergeCollection,
+  } = useCollectionDetailScreen(collectionId, user, authLoading);
   const [showEdit, setShowEdit] = useState(false);
-
-  const load = useCallback(async () => {
-    try {
-      const { collection: data } = await api.collections.get(collectionId);
-      setCollection(data);
-    } catch (err) {
-      setError(getErrorMessage(err, 'Koleksiyon bulunamadı.'));
-    } finally {
-      setLoading(false);
-    }
-  }, [collectionId]);
-
-  useEffect(() => {
-    if (authLoading) return;
-    load();
-  }, [authLoading, load]);
-
-  const isOwner = !!(user && collection && user.id === (collection as any).userId);
-
-  const handleRemoveItem = useCallback(async (torrentId: string) => {
-    if (!collection) return;
-    try {
-      await api.collections.removeItem(collection.id, torrentId);
-      setCollection((prev) =>
-        prev ? { ...prev, items: prev.items.filter((i) => i.torrentId !== torrentId) } : prev,
-      );
-    } catch (err) {
-      showErrorToast(err, 'Torrent koleksiyondan kaldırılamadı.');
-    }
-  }, [collection]);
-
-  const handleDelete = useCallback(async () => {
-    if (!collection) return;
-    if (!confirm('Bu koleksiyonu silmek istediğinize emin misiniz?')) return;
-    try {
-      await api.collections.delete(collection.id);
-      window.location.href = '/collections';
-    } catch (err) {
-      showErrorToast(err, 'Koleksiyon silinemedi.');
-    }
-  }, [collection]);
-
-  const handleEdited = useCallback((updated: CollectionInfo) => {
-    setCollection((prev) => prev ? { ...prev, ...updated } : prev);
-  }, []);
 
   if (loading || authLoading) {
     return (
@@ -91,9 +51,7 @@ export default function CollectionDetail({ collectionId }: Props) {
         <div className="min-w-0 space-y-1">
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-semibold tracking-tight truncate">{collection.name}</h1>
-            {collection.isPublic && (
-              <Badge variant="secondary">Herkese açık</Badge>
-            )}
+            {collection.isPublic && <Badge variant="secondary">Herkese açık</Badge>}
           </div>
           {collection.description && (
             <p className="text-sm text-muted-foreground">{collection.description}</p>
@@ -113,7 +71,7 @@ export default function CollectionDetail({ collectionId }: Props) {
                 variant="ghost"
                 size="sm"
                 className="text-destructive hover:text-destructive"
-                onClick={handleDelete}
+                onClick={removeCurrentCollection}
               >
                 Sil
               </Button>
@@ -153,7 +111,7 @@ export default function CollectionDetail({ collectionId }: Props) {
                   variant="ghost"
                   size="sm"
                   className="shrink-0 text-destructive hover:text-destructive"
-                  onClick={() => handleRemoveItem(item.torrentId)}
+                  onClick={() => removeItem(item.torrentId)}
                 >
                   Kaldır
                 </Button>
@@ -163,13 +121,13 @@ export default function CollectionDetail({ collectionId }: Props) {
         </div>
       )}
 
-      {isOwner && collection && (
-        <CollectionManager
+      {isOwner && (
+        <CollectionManagerDialog
           open={showEdit}
           onOpenChange={setShowEdit}
           mode="edit"
           collection={collection}
-          onSuccess={handleEdited}
+          onSuccess={mergeCollection}
         />
       )}
     </div>

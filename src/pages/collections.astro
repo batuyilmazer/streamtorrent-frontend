@@ -1,11 +1,11 @@
 ---
-import CollectionList from '@/components/collections/CollectionList';
+import CollectionListScreen from '@/features/collections/screens/CollectionListScreen';
 import AppProviders from '@/components/providers/AppProviders';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 ---
 
 <BaseLayout title="StreamTorrent — Koleksiyonlarım">
   <AppProviders client:load>
-    <CollectionList />
+    <CollectionListScreen />
   </AppProviders>
 </BaseLayout>

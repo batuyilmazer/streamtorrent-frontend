@@ -1,45 +1,12 @@
-import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/components/auth/AuthProvider';
-import { api, type UserTorrentEntry } from '@/lib/api';
-import { TorrentCard } from '@/components/TorrentCard';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { buttonVariants, Button } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { getErrorMessage } from '@/lib/utils';
-import { showErrorToast } from '@/lib/toast';
+import { TorrentCard } from '@/features/torrents/components/TorrentCard';
+import { useLibraryScreen } from '@/features/library/hooks/useLibraryScreen';
 
-export default function LibraryPage() {
+export default function LibraryScreen() {
   const { user, isLoading: authLoading } = useAuth();
-  const [items, setItems] = useState<UserTorrentEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    if (authLoading) return;
-    if (!user) {
-      window.location.href = '/login';
-      return;
-    }
-
-    let cancelled = false;
-    api.userTorrents.list().then(({ userTorrents }) => {
-      if (!cancelled) setItems(userTorrents);
-    }).catch((err) => {
-      if (!cancelled) setError(getErrorMessage(err, 'Yüklenemedi.'));
-    }).finally(() => {
-      if (!cancelled) setLoading(false);
-    });
-
-    return () => { cancelled = true; };
-  }, [user, authLoading]);
-
-  const handleRemove = useCallback(async (torrentId: string) => {
-    try {
-      await api.userTorrents.remove(torrentId);
-      setItems((prev) => prev.filter((i) => i.torrent.id !== torrentId));
-    } catch (err) {
-      showErrorToast(err, 'Torrent kütüphaneden kaldırılamadı.');
-    }
-  }, []);
+  const { items, loading, error, removeItem } = useLibraryScreen(user, authLoading);
 
   if (authLoading || (!user && !error)) {
     return (
@@ -84,7 +51,7 @@ export default function LibraryPage() {
                 variant="ghost"
                 size="sm"
                 className="shrink-0 text-destructive hover:text-destructive"
-                onClick={() => handleRemove(item.torrent.id)}
+                onClick={() => removeItem(item.torrent.id)}
               >
                 Kaldır
               </Button>
