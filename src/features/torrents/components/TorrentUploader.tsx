@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 interface Props {
@@ -11,31 +11,34 @@ export function TorrentUploader({ onTorrent, loading }: Props) {
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleFile = useCallback((file: File | undefined) => {
-    if (!file) return;
-    if (!file.name.endsWith('.torrent')) {
-      setError('Sadece .torrent dosyaları desteklenir.');
-      return;
-    }
-    setError(null);
-    onTorrent(file);
-  }, [onTorrent]);
+  const handleFile = useCallback(
+    (file: File | undefined) => {
+      if (!file) return;
+      if (!file.name.endsWith('.torrent')) {
+        setError('Sadece .torrent dosyaları desteklenir.');
+        return;
+      }
+      setError(null);
+      onTorrent(file);
+    },
+    [onTorrent],
+  );
 
-  const onDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
+  const onDragOver = (event: React.DragEvent) => {
+    event.preventDefault();
     setIsDragOver(true);
   };
 
   const onDragLeave = () => setIsDragOver(false);
 
-  const onDrop = (e: React.DragEvent) => {
-    e.preventDefault();
+  const onDrop = (event: React.DragEvent) => {
+    event.preventDefault();
     setIsDragOver(false);
-    handleFile(e.dataTransfer.files[0]);
+    handleFile(event.dataTransfer.files[0]);
   };
 
-  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleFile(e.target.files?.[0]);
+  const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    handleFile(event.target.files?.[0]);
   };
 
   return (
@@ -92,9 +95,7 @@ export function TorrentUploader({ onTorrent, loading }: Props) {
         />
       </div>
 
-      {error && (
-        <p className="text-xs text-white/90 bg-black/25 px-2 py-1 rounded">{error}</p>
-      )}
+      {error && <p className="text-xs text-white/90 bg-black/25 px-2 py-1 rounded">{error}</p>}
     </div>
   );
 }

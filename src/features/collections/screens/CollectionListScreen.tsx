@@ -1,42 +1,16 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/components/auth/AuthProvider';
-import { api, type CollectionInfo } from '@/lib/api';
-import { CollectionManager } from './CollectionManager';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button, buttonVariants } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { getErrorMessage } from '@/lib/utils';
+import { CollectionManagerDialog } from '@/features/collections/components/CollectionManagerDialog';
+import { useCollectionListScreen } from '@/features/collections/hooks/useCollectionListScreen';
 
-export default function CollectionList() {
+export default function CollectionListScreen() {
   const { user, isLoading: authLoading } = useAuth();
-  const [collections, setCollections] = useState<CollectionInfo[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const { collections, loading, error, prependCollection } = useCollectionListScreen(user, authLoading);
   const [showCreate, setShowCreate] = useState(false);
-
-  useEffect(() => {
-    if (authLoading) return;
-    if (!user) {
-      window.location.href = '/login';
-      return;
-    }
-
-    let cancelled = false;
-    api.collections.list().then(({ collections: data }) => {
-      if (!cancelled) setCollections(data);
-    }).catch((err) => {
-      if (!cancelled) setError(getErrorMessage(err, 'Yüklenemedi.'));
-    }).finally(() => {
-      if (!cancelled) setLoading(false);
-    });
-
-    return () => { cancelled = true; };
-  }, [user, authLoading]);
-
-  const handleCreated = useCallback((collection: CollectionInfo) => {
-    setCollections((prev) => [collection, ...prev]);
-  }, []);
 
   if (authLoading || (!user && !error)) {
     return (
@@ -74,23 +48,23 @@ export default function CollectionList() {
         </div>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
-          {collections.map((col) => (
-            <a key={col.id} href={`/collections/${col.id}`} className="block">
+          {collections.map((collection) => (
+            <a key={collection.id} href={`/collections/${collection.id}`} className="block">
               <Card className="hover:border-muted-foreground/50 transition-colors cursor-pointer h-full">
                 <CardContent className="py-4 space-y-1">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="font-medium text-sm truncate">{col.name}</p>
+                    <p className="font-medium text-sm truncate">{collection.name}</p>
                     <div className="flex items-center gap-1.5 shrink-0">
-                      {col.isPublic && (
+                      {collection.isPublic && (
                         <Badge variant="secondary" className="text-xs">Herkese açık</Badge>
                       )}
                       <Badge variant="outline" className="text-xs">
-                        {col._count?.items ?? 0} torrent
+                        {collection._count?.items ?? 0} torrent
                       </Badge>
                     </div>
                   </div>
-                  {col.description && (
-                    <p className="text-xs text-muted-foreground line-clamp-2">{col.description}</p>
+                  {collection.description && (
+                    <p className="text-xs text-muted-foreground line-clamp-2">{collection.description}</p>
                   )}
                 </CardContent>
               </Card>
@@ -99,11 +73,11 @@ export default function CollectionList() {
         </div>
       )}
 
-      <CollectionManager
+      <CollectionManagerDialog
         open={showCreate}
         onOpenChange={setShowCreate}
         mode="create"
-        onSuccess={handleCreated}
+        onSuccess={prependCollection}
       />
     </div>
   );

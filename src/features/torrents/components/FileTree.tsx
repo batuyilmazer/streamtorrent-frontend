@@ -1,5 +1,5 @@
-import { formatBytes, isVideoFile, cn } from '@/lib/utils';
 import type { FileEntry } from '@/lib/api';
+import { cn, formatBytes, isVideoFile } from '@/lib/utils';
 
 interface Props {
   files: FileEntry[];
@@ -28,9 +28,7 @@ export function FileTree({ files, selectedIndex, onSelect, className }: Props) {
             <button
               className={cn(
                 "flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left font-['Bahianita',sans-serif] text-[20px] leading-none transition-colors",
-                isSelected
-                  ? 'bg-black text-[#f7f2e5]'
-                  : 'text-black hover:bg-black/10',
+                isSelected ? 'bg-black text-[#f7f2e5]' : 'text-black hover:bg-black/10',
                 !isVideo && 'cursor-not-allowed opacity-45',
               )}
               title={file.path || file.name}

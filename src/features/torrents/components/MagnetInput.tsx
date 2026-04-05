@@ -25,8 +25,8 @@ export function MagnetInput({ onMagnet, loading }: Props) {
     onMagnet(trimmed);
   };
 
-  const onKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') submit();
+  const onKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') submit();
   };
 
   return (
@@ -42,7 +42,7 @@ export function MagnetInput({ onMagnet, loading }: Props) {
           type="text"
           placeholder="magnet:?xt=urn..."
           value={value}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(event) => setValue(event.target.value)}
           onKeyDown={onKeyDown}
           disabled={loading}
           className="absolute left-[12px] top-[6px] h-[41px] w-[237px] bg-transparent border-none p-0 outline-none font-['Bahianita',sans-serif] text-[26px] leading-none text-black placeholder:text-[#b8b8b8] disabled:opacity-50"
@@ -63,9 +63,7 @@ export function MagnetInput({ onMagnet, loading }: Props) {
         </button>
       </div>
 
-      {error && (
-        <p className="text-xs text-white/90 bg-black/25 px-2 py-1 rounded">{error}</p>
-      )}
+      {error && <p className="text-xs text-white/90 bg-black/25 px-2 py-1 rounded">{error}</p>}
     </div>
   );
 }

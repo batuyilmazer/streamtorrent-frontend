@@ -1,7 +1,7 @@
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { formatBytes } from '@/lib/utils';
+import { Card, CardContent } from '@/components/ui/card';
 import type { TorrentInfo } from '@/lib/api';
+import { formatBytes } from '@/lib/utils';
 
 interface Props {
   torrent: TorrentInfo;
