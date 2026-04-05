@@ -1,5 +1,5 @@
 ---
-import TorrentApp from '@/components/TorrentApp';
+import TorrentLandingScreen from '@/features/torrents/screens/TorrentLandingScreen';
 import HomeLayout from '@/layouts/HomeLayout.astro';
 ---
 
@@ -7,5 +7,5 @@ import HomeLayout from '@/layouts/HomeLayout.astro';
   title="film.bira.pizza"
   description=".torrent yükleyin veya magnet linki yapıştırın, videoyu anında izleyin."
 >
-  <TorrentApp client:load />
+  <TorrentLandingScreen client:load />
 </HomeLayout>

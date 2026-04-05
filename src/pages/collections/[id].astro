@@ -1,5 +1,5 @@
 ---
-import CollectionDetail from '@/components/collections/CollectionDetail';
+import CollectionDetailScreen from '@/features/collections/screens/CollectionDetailScreen';
 import AppProviders from '@/components/providers/AppProviders';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 
@@ -9,6 +9,6 @@ if (!id) return Astro.redirect('/collections');
 
 <BaseLayout title="StreamTorrent — Koleksiyon">
   <AppProviders client:load>
-    <CollectionDetail collectionId={id} />
+    <CollectionDetailScreen collectionId={id} />
   </AppProviders>
 </BaseLayout>

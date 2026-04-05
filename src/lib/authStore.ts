@@ -1,14 +1,12 @@
 import type { MeUser, LoginRequest, RegisterRequest } from './api';
-import { createApiError, getErrorMessage } from './errors';
-
-const fallbackApiBase = import.meta.env.PROD
-  ? 'https://api.film.bira.pizza'
-  : 'http://localhost:8080';
-
-const API_BASE = (import.meta.env.PUBLIC_API_URL ?? fallbackApiBase)
-  .split(',')
-  .map((value) => value.trim())
-  .find(Boolean) ?? fallbackApiBase;
+import { getErrorMessage } from './errors';
+import {
+  requestCurrentUser,
+  requestLogin,
+  requestLogout,
+  requestRefresh,
+  requestRegister,
+} from './auth/transport';
 
 interface AuthState {
   accessToken: string | null;
@@ -61,23 +59,11 @@ function scheduleRefresh(accessToken: string) {
 }
 
 async function rawRefresh(): Promise<string | null> {
-  const res = await fetch(`${API_BASE}/auth/refresh`, {
-    method: 'POST',
-    credentials: 'include',
-  });
-  if (!res.ok) return null;
-  const data = await res.json();
-  return (data.access as string) ?? null;
+  return requestRefresh();
 }
 
 async function rawMe(accessToken: string): Promise<MeUser | null> {
-  const res = await fetch(`${API_BASE}/me`, {
-    credentials: 'include',
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-  if (!res.ok) return null;
-  const data = await res.json();
-  return (data.user as MeUser) ?? null;
+  return requestCurrentUser(accessToken);
 }
 
 async function silentRefresh(): Promise<string | null> {
@@ -199,21 +185,11 @@ export const authStore = {
   },
 
   async login(payload: LoginRequest): Promise<void> {
-    const res = await fetch(`${API_BASE}/auth/login`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}));
-      throw createApiError(res.status, body, res.statusText);
-    }
-    const data = await res.json();
+    const data = await requestLogin(payload);
     const user = await rawMe(data.access);
     update({
       accessToken: data.access,
-      user: user ?? makeFallbackUser(data.user.userId, data.user.email),
+      user: user ?? makeFallbackUser(data.user.userId ?? data.user.id ?? '', data.user.email),
       isLoading: false,
       sessionExpired: false,
     });
@@ -222,21 +198,11 @@ export const authStore = {
   },
 
   async register(payload: RegisterRequest): Promise<void> {
-    const res = await fetch(`${API_BASE}/auth/register`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}));
-      throw createApiError(res.status, body, res.statusText);
-    }
-    const data = await res.json();
+    const data = await requestRegister(payload);
     const user = await rawMe(data.access);
     update({
       accessToken: data.access,
-      user: user ?? makeFallbackUser(data.user.id, data.user.email),
+      user: user ?? makeFallbackUser(data.user.id ?? data.user.userId ?? '', data.user.email),
       isLoading: false,
       sessionExpired: false,
     });
@@ -247,16 +213,9 @@ export const authStore = {
   async logout(): Promise<void> {
     let logoutError: Error | null = null;
     try {
-      const res = await fetch(`${API_BASE}/auth/logout`, {
-        method: 'POST',
-        credentials: 'include',
-      });
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        logoutError = createApiError(res.status, body, res.statusText);
-      }
+      await requestLogout();
     } catch (err) {
-      logoutError = new Error(getErrorMessage(err, 'Çıkış yapılamadı.'));
+      logoutError = err instanceof Error ? err : new Error(getErrorMessage(err, 'Çıkış yapılamadı.'));
     } finally {
       clearRefreshTimer();
       update({ accessToken: null, user: null, isLoading: false, sessionExpired: false });

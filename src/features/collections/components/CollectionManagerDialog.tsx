@@ -1,18 +1,19 @@
-import { useState, useCallback } from 'react';
-import { api, type CollectionInfo } from '@/lib/api';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
+import type { CollectionInfo } from '@/lib/api';
 import { getErrorMessage } from '@/lib/utils';
+import { createCollection, updateCollection } from '@/features/collections/services/collections';
 
 interface Props {
   open: boolean;
@@ -22,41 +23,54 @@ interface Props {
   onSuccess: (collection: CollectionInfo) => void;
 }
 
-export function CollectionManager({ open, onOpenChange, mode, collection, onSuccess }: Props) {
+export function CollectionManagerDialog({ open, onOpenChange, mode, collection, onSuccess }: Props) {
   const [name, setName] = useState(collection?.name ?? '');
   const [description, setDescription] = useState(collection?.description ?? '');
   const [isPublic, setIsPublic] = useState(collection?.isPublic ?? false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    if (!open) return;
+    setName(collection?.name ?? '');
+    setDescription(collection?.description ?? '');
+    setIsPublic(collection?.isPublic ?? false);
+    setError('');
+  }, [collection, open]);
+
   const handleSubmit = useCallback(async () => {
-    if (!name.trim()) return;
+    const trimmedName = name.trim();
+    if (!trimmedName) return;
+
     setLoading(true);
     setError('');
 
     try {
-      if (mode === 'create') {
-        const { collection: created } = await api.collections.create({
-          name: name.trim(),
-          description: description.trim() || undefined,
-          isPublic,
-        });
-        onSuccess(created);
-      } else if (collection) {
-        const { collection: updated } = await api.collections.update(collection.id, {
-          name: name.trim(),
-          description: description.trim() || null,
-          isPublic,
-        });
-        onSuccess(updated);
+      const nextCollection =
+        mode === 'create'
+          ? await createCollection({
+              name: trimmedName,
+              description: description.trim() || undefined,
+              isPublic,
+            })
+          : collection
+            ? await updateCollection(collection.id, {
+                name: trimmedName,
+                description: description.trim() || null,
+                isPublic,
+              })
+            : null;
+
+      if (nextCollection) {
+        onSuccess(nextCollection);
+        onOpenChange(false);
       }
-      onOpenChange(false);
     } catch (err) {
       setError(getErrorMessage(err, 'Bir hata oluştu.'));
     } finally {
       setLoading(false);
     }
-  }, [name, description, isPublic, mode, collection, onSuccess, onOpenChange]);
+  }, [collection, description, isPublic, mode, name, onOpenChange, onSuccess]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -68,16 +82,14 @@ export function CollectionManager({ open, onOpenChange, mode, collection, onSucc
         </DialogHeader>
 
         <div className="space-y-4 py-2">
-          {error && (
-            <p className="text-sm text-destructive">{error}</p>
-          )}
+          {error && <p className="text-sm text-destructive">{error}</p>}
 
           <div className="space-y-2">
             <Label htmlFor="col-name">Ad</Label>
             <Input
               id="col-name"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(event) => setName(event.target.value)}
               placeholder="Koleksiyon adı"
               maxLength={100}
             />
@@ -88,7 +100,7 @@ export function CollectionManager({ open, onOpenChange, mode, collection, onSucc
             <Textarea
               id="col-desc"
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(event) => setDescription(event.target.value)}
               placeholder="İsteğe bağlı açıklama"
               maxLength={500}
               rows={3}
