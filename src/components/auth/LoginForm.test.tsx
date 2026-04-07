@@ -31,9 +31,9 @@ describe('LoginForm', () => {
     const user = userEvent.setup();
     render(createElement(LoginForm));
 
-    await user.type(screen.getByLabelText('E-posta'), '  user@example.com  ');
+    await user.type(screen.getByLabelText('Email'), '  user@example.com  ');
     await user.type(screen.getByLabelText('Şifre'), 'secret');
-    await user.click(screen.getByRole('button', { name: 'Giriş Yap' }));
+    await user.click(screen.getByRole('button', { name: 'Oturum Aç' }));
 
     await waitFor(() => {
       expect(login).toHaveBeenCalledWith({
@@ -53,10 +53,10 @@ describe('LoginForm', () => {
     const user = userEvent.setup();
     render(createElement(LoginForm));
 
-    await user.type(screen.getByLabelText('E-posta'), 'user@example.com');
+    await user.type(screen.getByLabelText('Email'), 'user@example.com');
     await user.type(screen.getByLabelText('Şifre'), 'secret');
-    await user.click(screen.getByRole('button', { name: 'Giriş Yap' }));
+    await user.click(screen.getByRole('button', { name: 'Oturum Aç' }));
 
-    expect(await screen.findByText('Giriş yapılamadı.')).toBeInTheDocument();
+    expect(await screen.findByText('Giriş yapılamadı.')).toBeTruthy();
   });
 });

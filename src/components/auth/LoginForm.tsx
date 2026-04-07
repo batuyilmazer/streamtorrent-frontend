@@ -1,8 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/components/auth/AuthProvider';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { FigmaAuthField } from '@/components/auth/FigmaAuthField';
+import { FigmaAuthLayout } from '@/components/auth/FigmaAuthLayout';
 import { getErrorMessage } from '@/lib/utils';
 
 export function LoginForm() {
@@ -11,11 +10,7 @@ export function LoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const isDisabled = useMemo(
-    () => authBootLoading || isSubmitting,
-    [authBootLoading, isSubmitting],
-  );
+  const isDisabled = authBootLoading || isSubmitting;
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -34,60 +29,45 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="mx-auto w-full max-w-md">
-      <CardHeader>
-        <CardTitle>Giriş Yap</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <label htmlFor="login-email" className="text-sm font-medium">
-              E-posta
-            </label>
-            <Input
-              id="login-email"
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="ornek@mail.com"
-              disabled={isDisabled}
-            />
-          </div>
+    <FigmaAuthLayout
+      busySubmitLabel="Açılıyor..."
+      error={error}
+      footerLead="Hesabın Yok mu?"
+      footerLinkHref="/register"
+      footerLinkLabel="Hesap Oluştur"
+      isSubmitting={isDisabled}
+      onSubmit={handleSubmit}
+      submitButtonAssetSrc="/figma-auth/login-button-background.svg"
+      submitLabel="Oturum Aç"
+      title="Oturum Aç"
+    >
+      <div className="space-y-1">
+        <FigmaAuthField
+          id="login-email"
+          label="Email"
+          type="email"
+          autoComplete="email"
+          inputComponentFrameSrc="/figma-auth/login-input-component-frame.svg"
+          inputInnerFrameSrc="/figma-auth/login-input-inner-frame.svg"
+          placeholder="email@gmail.com"
+          value={email}
+          onChange={setEmail}
+          disabled={isDisabled}
+        />
 
-          <div className="space-y-2">
-            <label htmlFor="login-password" className="text-sm font-medium">
-              Şifre
-            </label>
-            <Input
-              id="login-password"
-              type="password"
-              autoComplete="current-password"
-              required
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="********"
-              disabled={isDisabled}
-            />
-          </div>
-
-          {error && (
-            <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-              {error}
-            </p>
-          )}
-
-          <Button type="submit" className="w-full" disabled={isDisabled}>
-            {isSubmitting ? 'Giriş yapılıyor...' : 'Giriş Yap'}
-          </Button>
-          <div className="text-center">
-            <a href="/reset-password" className="text-sm text-primary hover:underline">
-              Şifremi Unuttum
-            </a>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+        <FigmaAuthField
+          id="login-password"
+          label="Şifre"
+          type="password"
+          autoComplete="current-password"
+          inputComponentFrameSrc="/figma-auth/login-input-component-frame.svg"
+          inputInnerFrameSrc="/figma-auth/login-input-inner-frame.svg"
+          placeholder="∗∗∗∗∗∗∗∗"
+          value={password}
+          onChange={setPassword}
+          disabled={isDisabled}
+        />
+      </div>
+    </FigmaAuthLayout>
   );
 }
