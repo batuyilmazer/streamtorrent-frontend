@@ -63,10 +63,10 @@ export function TorrentUploader({ onTorrent, loading }: Props) {
           draggable={false}
         />
 
-        <div className="absolute left-[100px] top-[53px] z-10 flex w-[130px] flex-col items-center gap-[6px] text-center transition-transform duration-300 ease-in-out group-hover:scale-[1.03] group-active:translate-y-px">
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-[2%] text-center transition-transform duration-300 ease-in-out group-hover:scale-[1.03] group-active:translate-y-px">
           {loading ? (
             <svg
-              className="mx-auto mt-8 size-12 animate-spin text-black"
+              className="size-12 animate-spin text-black"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -76,10 +76,10 @@ export function TorrentUploader({ onTorrent, loading }: Props) {
             </svg>
           ) : (
             <>
-              <p className="w-full font-['Bahianita',sans-serif] text-[96px] leading-[0.7] text-black transition-[text-shadow] duration-300 ease-in-out">
+              <p className="font-['Bahianita',sans-serif] text-[64px] sm:text-[80px] md:text-[96px] leading-[0.7] text-black transition-[text-shadow] duration-300 ease-in-out">
                 YÜKLE
               </p>
-              <p className="w-full font-['Bahianita',sans-serif] text-[24px] leading-none text-[#505050] transition-[text-shadow] duration-300 ease-in-out">
+              <p className="font-['Bahianita',sans-serif] text-[18px] sm:text-[22px] md:text-[24px] leading-none text-[#505050] transition-[text-shadow] duration-300 ease-in-out">
                 .torrent
               </p>
             </>

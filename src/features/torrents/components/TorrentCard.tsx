@@ -14,8 +14,8 @@ export function TorrentCard({ torrent, onClick }: Props) {
       className={onClick ? 'cursor-pointer hover:border-muted-foreground/50 transition-colors' : ''}
       onClick={onClick}
     >
-      <CardContent className="flex items-center justify-between gap-4 py-4">
-        <div className="min-w-0 space-y-0.5">
+      <CardContent className="flex flex-col items-start gap-2 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+        <div className="w-full min-w-0 space-y-0.5">
           <p className="font-medium truncate text-sm">{torrent.name}</p>
           <p className="text-xs text-muted-foreground">{formatBytes(Number(torrent.size))}</p>
         </div>

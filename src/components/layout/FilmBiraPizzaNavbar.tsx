@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { authStore } from '@/lib/authStore';
-import MenuButton from '@/components/layout/MenuButton';
+import MobileNav from '@/components/layout/MobileNav';
 
 const brandTextShadow = [
   '2px 8px 0 #000', '-2px 8px 0 #000',
@@ -16,16 +16,16 @@ const brandTextShadow = [
 ].join(', ');
 
 const brandClass =
-  "absolute left-1/2 top-[26px] -translate-x-1/2 whitespace-nowrap font-['Bahianita',sans-serif] text-[48px] leading-none text-[#f7f2e5]";
+  "whitespace-nowrap font-['Bahianita',sans-serif] text-[28px] sm:text-[36px] md:text-[48px] leading-none text-[#f7f2e5]";
 
 const navLinkClass =
-  "font-['Bahianita',sans-serif] text-[36px] leading-none text-white transition-all duration-300 ease-in-out hover:opacity-95 hover:[text-shadow:0_4px_0_rgba(0,0,0,1)] active:translate-y-px";
+  "font-['Bahianita',sans-serif] text-[28px] lg:text-[36px] leading-none text-white transition-all duration-300 ease-in-out hover:opacity-95 hover:[text-shadow:0_4px_0_rgba(0,0,0,1)] active:translate-y-px";
 
 const authFrameButtonClass =
-  "group relative block h-[65px] w-[160px] transform-gpu transition-[transform,filter] duration-300 ease-in-out hover:brightness-105 hover:drop-shadow-[0_8px_0_rgba(0,0,0,1)] active:translate-y-px";
+  "group relative block h-[52px] w-[140px] lg:h-[65px] lg:w-[160px] transform-gpu transition-[transform,filter] duration-300 ease-in-out hover:brightness-105 hover:drop-shadow-[0_8px_0_rgba(0,0,0,1)] active:translate-y-px";
 
 const authFrameLabelClass =
-  "absolute inset-x-[4px] top-[4px] flex h-[48px] items-center justify-center font-['Bahianita',sans-serif] text-[36px] leading-none text-black transition-transform duration-300 ease-in-out group-hover:scale-[1.03] group-active:translate-y-px";
+  "absolute inset-x-[4px] top-[4px] flex h-[40px] lg:h-[48px] items-center justify-center font-['Bahianita',sans-serif] text-[26px] lg:text-[36px] leading-none text-black transition-transform duration-300 ease-in-out group-hover:scale-[1.03] group-active:translate-y-px";
 
 export function FilmBiraPizzaNavbar() {
   const { user, isLoading, sessionExpired } = useAuth();
@@ -37,7 +37,7 @@ export function FilmBiraPizzaNavbar() {
   return (
     <>
       {sessionExpired && (
-        <div className="fixed inset-x-0 top-0 z-50 flex items-center justify-center gap-3 bg-amber-500/90 px-4 py-2 text-sm text-white backdrop-blur">
+        <div className="fixed inset-x-0 top-0 z-50 flex flex-wrap items-center justify-center gap-2 sm:gap-3 bg-amber-500/90 px-3 py-2 text-xs sm:text-sm text-white backdrop-blur">
           <span>Oturumunuz sona erdi. Lütfen tekrar giriş yapın.</span>
           <a href="/login" className="rounded border border-white/70 px-3 py-1 text-xs uppercase tracking-wide transition-opacity hover:opacity-80">
             Giriş Yap
@@ -52,9 +52,11 @@ export function FilmBiraPizzaNavbar() {
         </div>
       )}
 
-      <nav className="absolute left-0 top-0 h-[111px] w-[1280px] px-[47px] py-[14px]">
-        <div className="relative flex h-full items-center justify-between">
-          <MenuButton />
+      <nav className="w-full px-4 sm:px-8 md:px-[47px] py-3 md:py-[14px]">
+        <div className="flex items-center justify-between gap-3 md:gap-6">
+          <div className="md:hidden">
+            <MobileNav />
+          </div>
 
           <a
             href="/"
@@ -67,7 +69,7 @@ export function FilmBiraPizzaNavbar() {
             film.bira.pizza
           </a>
 
-          <div className="ml-auto flex h-[65px] items-center gap-[34px]">
+          <div className="hidden md:flex items-center gap-6 lg:gap-[34px]">
             {isLoading ? (
               <>
                 <div className="h-9 w-20 animate-pulse rounded bg-white/25" />

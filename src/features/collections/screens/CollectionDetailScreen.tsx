@@ -47,10 +47,10 @@ export default function CollectionDetailScreen({ collectionId }: Props) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div className="min-w-0 space-y-1">
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold tracking-tight truncate">{collection.name}</h1>
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="text-xl sm:text-2xl font-semibold tracking-tight truncate">{collection.name}</h1>
             {collection.isPublic && <Badge variant="secondary">Herkese açık</Badge>}
           </div>
           {collection.description && (
@@ -61,7 +61,7 @@ export default function CollectionDetailScreen({ collectionId }: Props) {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 sm:shrink-0">
           {isOwner && (
             <>
               <Button variant="outline" size="sm" onClick={() => setShowEdit(true)}>
@@ -88,13 +88,13 @@ export default function CollectionDetailScreen({ collectionId }: Props) {
           <p className="text-muted-foreground">Bu koleksiyonda henüz torrent yok.</p>
         </div>
       ) : (
-        <div className="grid gap-3">
+        <div className="grid gap-3 sm:grid-cols-2">
           {collection.items.map((item) => (
-            <div key={item.id} className="flex items-center gap-2">
+            <div key={item.id} className="flex items-stretch gap-2">
               <a href={`/watch/${item.torrent.id}`} className="flex-1 min-w-0 block">
-                <Card className="hover:border-muted-foreground/50 transition-colors cursor-pointer">
-                  <CardContent className="flex items-center justify-between gap-4 py-4">
-                    <div className="min-w-0 space-y-0.5">
+                <Card className="hover:border-muted-foreground/50 transition-colors cursor-pointer h-full">
+                  <CardContent className="flex flex-col items-start gap-2 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                    <div className="w-full min-w-0 space-y-0.5">
                       <p className="font-medium truncate text-sm">{item.torrent.name}</p>
                       <p className="text-xs text-muted-foreground">
                         {formatBytes(Number(item.torrent.size) || 0)}

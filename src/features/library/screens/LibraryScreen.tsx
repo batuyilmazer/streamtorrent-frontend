@@ -19,9 +19,9 @@ export default function LibraryScreen() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold tracking-tight">Kütüphanem</h1>
-        <a href="/collections" className={buttonVariants({ variant: 'outline', size: 'sm' })}>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">Kütüphanem</h1>
+        <a href="/collections" className={`${buttonVariants({ variant: 'outline', size: 'sm' })} self-start sm:self-auto`}>
           Koleksiyonlarım
         </a>
       </div>
@@ -38,9 +38,9 @@ export default function LibraryScreen() {
           </a>
         </div>
       ) : (
-        <div className="grid gap-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => (
-            <div key={item.id} className="flex items-center gap-2">
+            <div key={item.id} className="flex items-stretch gap-2">
               <div className="flex-1 min-w-0">
                 <TorrentCard
                   torrent={item.torrent}

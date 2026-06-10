@@ -27,7 +27,7 @@ export function FileTree({ files, selectedIndex, onSelect, className }: Props) {
           <li key={file.index}>
             <button
               className={cn(
-                "flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left font-['Bahianita',sans-serif] text-[20px] leading-none transition-colors",
+                "flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left font-['Bahianita',sans-serif] text-[16px] sm:text-[20px] leading-none transition-colors",
                 isSelected ? 'bg-black text-[#f7f2e5]' : 'text-black hover:bg-black/10',
                 !isVideo && 'cursor-not-allowed opacity-45',
               )}

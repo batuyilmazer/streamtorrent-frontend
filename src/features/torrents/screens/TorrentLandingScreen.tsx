@@ -81,25 +81,28 @@ export default function TorrentLandingScreen() {
 
       <FilmBiraPizzaNavbar />
 
-      <div className="absolute left-[38px] top-[171px] flex w-[313px] flex-col items-center gap-[33px]">
-        <TorrentUploader onTorrent={handleUpload} loading={isLoading} />
-        <p className="w-full text-center font-['Bahianita',sans-serif] text-[32px] leading-none text-white">
-          veya Magnet Linki Yapıştırın:
-        </p>
-        <MagnetInput onMagnet={handleMagnet} loading={isLoading} />
-      </div>
+      <div className="flex flex-1 flex-col gap-8 px-4 pb-10 pt-4 sm:px-8 lg:flex-row lg:items-start lg:gap-10 lg:px-[38px] lg:pt-[60px]">
+        <div className="flex w-full max-w-[313px] flex-col items-center gap-6 self-center sm:gap-[33px] lg:self-auto">
+          <TorrentUploader onTorrent={handleUpload} loading={isLoading} />
+          <p className="w-full text-center font-['Bahianita',sans-serif] text-[26px] leading-none text-white sm:text-[32px]">
+            veya Magnet Linki Yapıştırın:
+          </p>
+          <MagnetInput onMagnet={handleMagnet} loading={isLoading} />
+        </div>
 
-      <p className="absolute right-[55px] top-[141px] w-[360px] whitespace-nowrap text-center font-['Bahianita',sans-serif] text-[48px] leading-none text-white">
-        Henüz bir torrent yüklemedin
-      </p>
-
-      <div className="absolute left-[418px] top-[190.5px] h-[486px] w-[810px]">
-        <img
-          src="/frames/stream-video-frame.svg"
-          alt=""
-          className="block h-full w-full"
-          draggable={false}
-        />
+        <div className="flex flex-1 flex-col items-center gap-6 lg:items-stretch">
+          <p className="w-full text-center font-['Bahianita',sans-serif] text-[32px] leading-none text-white sm:text-[40px] lg:text-[48px]">
+            Henüz bir torrent yüklemedin
+          </p>
+          <div className="aspect-[810/486] w-full max-w-[810px] self-center">
+            <img
+              src="/frames/stream-video-frame.svg"
+              alt=""
+              className="block h-full w-full"
+              draggable={false}
+            />
+          </div>
+        </div>
       </div>
     </FilmPageStage>
   );
